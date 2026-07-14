@@ -1,0 +1,42 @@
+name: phpstan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: phpstan-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  phpstan:
+    runs-on: ubuntu-latest
+
+    name: Static analysis
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # phpstan.neon.dist pins phpVersion to 80400 — analyse on the same version.
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, bcmath, intl, fileinfo, sqlite3, pdo_sqlite
+          ini-values: memory_limit=-1
+          coverage: none
+
+      - name: Cache Composer downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/composer/files
+          key: composer-8.4-${{ hashFiles('composer.json') }}
+          restore-keys: composer-8.4-
+
+      - name: Install dependencies
+        run: composer update --prefer-dist --no-interaction --no-progress
+
+      - name: Run PHPStan
+        run: vendor/bin/phpstan analyse --no-progress --error-format=github

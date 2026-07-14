@@ -1,0 +1,42 @@
+name: type coverage
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: type-coverage-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  type-coverage:
+    runs-on: ubuntu-latest
+
+    name: Type coverage
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          extensions: dom, curl, libxml, mbstring, zip, pcntl, bcmath, intl, fileinfo, sqlite3, pdo_sqlite
+          # The type-coverage analyser blows past the default 128M limit.
+          ini-values: memory_limit=-1
+          coverage: none
+
+      - name: Cache Composer downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/composer/files
+          key: composer-8.4-${{ hashFiles('composer.json') }}
+          restore-keys: composer-8.4-
+
+      - name: Install dependencies
+        run: composer update --prefer-dist --no-interaction --no-progress
+
+      - name: Run type coverage
+        run: vendor/bin/pest --type-coverage --min=100
