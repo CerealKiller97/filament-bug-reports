@@ -135,10 +135,12 @@ BUG_REPORTS_GITHUB_REPOSITORY=acme/platform
 Both fall back to `GITHUB_TOKEN` and `GITHUB_BUG_REPOSITORY` if you already have those set. Everything else lives in `config/bug-reports.php`:
 
 ```php
-'user_model' => \App\Models\User::class,
+// The model a report belongs to. Point this at your own user model.
+'user_model' => \Illuminate\Foundation\Auth\User::class,
 
-// Stamped onto every report. Falls back to the app's `app.version`.
-'app_version' => env('BUG_REPORTS_APP_VERSION'),
+// Stamped onto every report. When empty, falls back to the app's
+// `app.version`, and then to 'dev'.
+'app_version' => env('BUG_REPORTS_APP_VERSION', ''),
 
 'screenshot' => [
     'disk' => env('BUG_REPORTS_SCREENSHOT_DISK', 'public'),
@@ -147,6 +149,8 @@ Both fall back to `GITHUB_TOKEN` and `GITHUB_BUG_REPOSITORY` if you already have
 ],
 
 'github' => [
+    'token' => env('BUG_REPORTS_GITHUB_TOKEN', env('GITHUB_TOKEN', '')),
+    'repository' => env('BUG_REPORTS_GITHUB_REPOSITORY', env('GITHUB_BUG_REPOSITORY', '')),
     'labels' => ['bug'],          // applied to every created issue
     'assignees' => [],
     'title_prefix' => '[In App] ',
@@ -157,6 +161,18 @@ Both fall back to `GITHUB_TOKEN` and `GITHUB_BUG_REPOSITORY` if you already have
     'frequency' => 'hourly',      // any Laravel Schedule method name
 ],
 ```
+
+### Empty string means "not configured" — never `null`
+
+Every string in this config is read with Laravel's `config()->string()`, which **throws** when a key holds `null` (it only falls back to a default when the key is *missing*, not when it's present-but-null). So the unset state for `app_version`, `github.token` and `github.repository` is an empty string, which is what the `env(..., '')` fallbacks guarantee.
+
+If you publish the config, keep that shape. Writing a literal `null`:
+
+```php
+'app_version' => null,   // 💥 InvalidArgumentException on the report form
+```
+
+will throw rather than fall back. An empty token or repository is also exactly what raises the friendly *"GitHub is not configured"* error, instead of the package trying to call the API with nothing.
 
 ## Keeping reports in sync
 
