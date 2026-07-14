@@ -1,0 +1,15 @@
+# Code owners are requested for review automatically on every pull request,
+# and — if branch protection requires their approval — must sign off before a
+# PR can merge. Later rules win over earlier ones.
+#
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Everything, by default.
+*                       @CerealKiller97
+
+# Release, CI and licensing — the things that are painful to get wrong.
+/.github/               @CerealKiller97
+/release.sh             @CerealKiller97
+/composer.json          @CerealKiller97
+/CHANGELOG.md           @CerealKiller97
+/LICENSE.md             @CerealKiller97
