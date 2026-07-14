@@ -68,8 +68,9 @@ test('it ignores reports that were never pushed to github', function (): void {
 });
 
 test('it throws a friendly error when github is not configured', function (): void {
-    config()->set('bug-reports.github.repository', null);
-    config()->set('bug-reports.github.token', null);
+    // "Not configured" is an empty string, not null — see CreateGithubIssueTest.
+    config()->set('bug-reports.github.repository', '');
+    config()->set('bug-reports.github.token', '');
     Http::fake();
 
     expect(fn (): int => app(SyncBugReportGithubIssues::class)->handle())

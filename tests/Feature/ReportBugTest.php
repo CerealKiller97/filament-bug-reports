@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use CerealKiller97\FilamentBugReports\Filament\Resources\BugReportResource;
 use CerealKiller97\FilamentBugReports\Filament\Resources\BugReports\Pages\CreateBugReport;
+use CerealKiller97\FilamentBugReports\Filament\Resources\BugReports\Schemas\BugReportForm;
 use CerealKiller97\FilamentBugReports\Models\BugReport;
 
 use function Pest\Laravel\actingAs;
@@ -48,4 +49,29 @@ test('the reporter role is resolved via the configured closure', function (): vo
         ->assertFormSet([
             'role' => 'manager',
         ]);
+});
+
+test('the report page opens with the config exactly as shipped', function (): void {
+    // A fresh install: nothing in .env, so the package config's env(..., '')
+    // fallback is what lands in config — and, like a stock Laravel app, there
+    // is no `app.version` key at all. `config()->string()` must survive both.
+    config()->set('bug-reports.app_version', '');
+
+    $app = config()->array('app');
+    unset($app['version']);
+    config()->set('app', $app);
+
+    expect(config()->has('app.version'))->toBeFalse();
+
+    actingAs(makeUser(false));
+
+    $this->get(BugReportResource::getUrl('create'))->assertSuccessful();
+
+    expect(BugReportForm::appVersion())->toBe('dev');
+});
+
+test('a configured app version wins over the framework one', function (): void {
+    config()->set('bug-reports.app_version', '2.7.1');
+
+    expect(BugReportForm::appVersion())->toBe('2.7.1');
 });

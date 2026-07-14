@@ -22,11 +22,14 @@ return [
     |--------------------------------------------------------------------------
     |
     | Stamped onto every report so you know which build a bug was hit on.
-    | When null, the host app's `app.version` is used.
+    | When empty, the host app's `app.version` is used.
+    |
+    | Note the '' fallback: these values are read with `config()->string()`,
+    | which throws on null. "Not configured" is an empty string here, never null.
     |
     */
 
-    'app_version' => env('BUG_REPORTS_APP_VERSION'),
+    'app_version' => env('BUG_REPORTS_APP_VERSION', ''),
 
     /*
     |--------------------------------------------------------------------------
@@ -48,11 +51,14 @@ return [
     | Where validated bug reports are pushed as issues. A token with `repo`
     | (or `issues:write`) scope and a target "owner/repo" are required.
     |
+    | Empty (never null) when unset — see the note on `app_version`. An empty
+    | token or repository is what raises the "GitHub is not configured" error.
+    |
     */
 
     'github' => [
-        'token' => env('BUG_REPORTS_GITHUB_TOKEN', env('GITHUB_TOKEN')),
-        'repository' => env('BUG_REPORTS_GITHUB_REPOSITORY', env('GITHUB_BUG_REPOSITORY')),
+        'token' => env('BUG_REPORTS_GITHUB_TOKEN', env('GITHUB_TOKEN', '')),
+        'repository' => env('BUG_REPORTS_GITHUB_REPOSITORY', env('GITHUB_BUG_REPOSITORY', '')),
         'labels' => ['bug'],
         'assignees' => [],
         'title_prefix' => '[In App] ',

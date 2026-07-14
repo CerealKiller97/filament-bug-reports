@@ -52,8 +52,10 @@ test('it is idempotent and does not create a second issue', function (): void {
 });
 
 test('it throws a friendly error when github is not configured', function (): void {
-    config()->set('bug-reports.github.repository', null);
-    config()->set('bug-reports.github.token', null);
+    // "Not configured" is an empty string, not null — the config never yields
+    // null, because these are read with config()->string(), which throws on it.
+    config()->set('bug-reports.github.repository', '');
+    config()->set('bug-reports.github.token', '');
     Http::fake();
 
     $report = BugReport::factory()->create();
