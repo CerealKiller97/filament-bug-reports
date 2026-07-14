@@ -28,16 +28,30 @@ use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
 abstract class TestCase extends Orchestra
 {
     /**
+     * Orchestra declares `$app` untyped, so a native type here narrows the
+     * parameter and is a fatal LSP violation. Keep it in the docblock.
+     *
+     * @param  Application  $app
      * @return array<int, class-string>
      */
-    protected function getPackageProviders(Application $app): array
+    protected function getPackageProviders($app): array
     {
         return [
-            LivewireServiceProvider::class,
             BladeIconsServiceProvider::class,
             BladeHeroiconsServiceProvider::class,
             BladeCaptureDirectiveServiceProvider::class,
+
+            // Order matters. Filament's SupportServiceProvider rebinds Livewire's
+            // DataStore with a non-shared `bind()`, which drops any previously
+            // registered shared instance. Livewire must register *after* it so
+            // its `instance()` wins and the store stays a singleton — otherwise
+            // every store() lookup returns a fresh DataStore, component error
+            // bags read back as null, and every Livewire render blows up. This
+            // mirrors real package discovery, where filament/support is
+            // registered before livewire/livewire.
             SupportServiceProvider::class,
+            LivewireServiceProvider::class,
+
             ActionsServiceProvider::class,
             FormsServiceProvider::class,
             InfolistsServiceProvider::class,
@@ -51,7 +65,10 @@ abstract class TestCase extends Orchestra
         ];
     }
 
-    protected function defineEnvironment(Application $app): void
+    /**
+     * @param  Application  $app
+     */
+    protected function defineEnvironment($app): void
     {
         $app['config']->set('app.version', 'test-version');
         $app['config']->set('bug-reports.user_model', User::class);
