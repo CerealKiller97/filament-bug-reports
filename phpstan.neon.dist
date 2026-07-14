@@ -1,0 +1,11 @@
+parameters:
+    phpVersion: 80400
+    level: 5
+    configDirectories:
+            - config
+    paths:
+        - src
+        - config
+        - database
+    parallel:
+        maximumNumberOfProcesses: 4

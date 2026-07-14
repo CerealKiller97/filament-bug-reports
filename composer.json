@@ -1,0 +1,57 @@
+{
+    "name": "cerealkiller97/filament-bug-reports",
+    "description": "A Filament plugin to collect in-app bug reports and push validated ones to GitHub issues.",
+    "keywords": ["filament", "laravel", "bug-reports", "github", "issues", "plugin"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "CerealKiller97"
+        }
+    ],
+    "require": {
+        "php": "^8.4",
+        "filament/filament": "^5.0",
+        "spatie/laravel-package-tools": "^1.16"
+    },
+    "autoload": {
+        "psr-4": {
+            "CerealKiller97\\FilamentBugReports\\": "src/",
+            "CerealKiller97\\FilamentBugReports\\Database\\Factories\\": "database/factories/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "CerealKiller97\\FilamentBugReports\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "pest",
+        "lint": "pint",
+        "analyse": "phpstan analyse --memory-limit=2G"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "CerealKiller97\\FilamentBugReports\\BugReportsServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true,
+            "phpstan/extension-installer": true
+        }
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "require-dev": {
+        "larastan/larastan": "^3.10",
+        "laravel/pint": "^1.29",
+        "orchestra/testbench": "^11.1",
+        "pestphp/pest": "^4.7",
+        "pestphp/pest-plugin-laravel": "^4.1",
+        "pestphp/pest-plugin-livewire": "^4.1",
+        "phpstan/extension-installer": "^1.4"
+    }
+}

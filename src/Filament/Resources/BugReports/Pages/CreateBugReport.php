@@ -1,0 +1,64 @@
+<?php
+
+declare(strict_types=1);
+
+namespace CerealKiller97\FilamentBugReports\Filament\Resources\BugReports\Pages;
+
+use CerealKiller97\FilamentBugReports\BugReportsPlugin;
+use CerealKiller97\FilamentBugReports\Filament\Resources\BugReportResource;
+use CerealKiller97\FilamentBugReports\Filament\Resources\BugReports\Schemas\BugReportForm;
+use Filament\Facades\Filament;
+use Filament\Notifications\Notification;
+use Filament\Resources\Pages\CreateRecord;
+
+class CreateBugReport extends CreateRecord
+{
+    protected static string $resource = BugReportResource::class;
+
+    /**
+     * The report list is manager-only, so send everyone else back to the
+     * dashboard after reporting instead of a page they cannot open.
+     */
+    protected function getRedirectUrl(): string
+    {
+        return BugReportsPlugin::get()->canManage(auth()->user())
+            ? $this->getResource()::getUrl('index')
+            : Filament::getUrl();
+    }
+
+    /**
+     * Hide the breadcrumb trail for reporters — it links back to the
+     * manager-only list.
+     *
+     * @return array<string, string>
+     */
+    public function getBreadcrumbs(): array
+    {
+        return BugReportsPlugin::get()->canManage(auth()->user()) ? parent::getBreadcrumbs() : [];
+    }
+
+    /**
+     * Stamp every report with the reporter, their role and the running app
+     * version — without asking them.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $user = auth()->user();
+
+        $data['user_id'] = $user?->getAuthIdentifier();
+        $data['role'] = BugReportsPlugin::get()->resolveReporterRole($user);
+        $data['app_version'] = BugReportForm::appVersion();
+
+        return $data;
+    }
+
+    protected function getCreatedNotification(): ?Notification
+    {
+        return Notification::make()
+            ->success()
+            ->title(__('bug-reports::bug-reports.notifications.reported'));
+    }
+}

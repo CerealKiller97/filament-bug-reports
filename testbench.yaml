@@ -1,0 +1,5 @@
+providers:
+    - CerealKiller97\FilamentBugReports\BugReportsServiceProvider
+
+migrations:
+    - database/migrations
