@@ -183,8 +183,67 @@ php artisan vendor:publish --tag=bug-reports-translations
 ## Testing
 
 ```bash
-composer test
+composer test            # Pest
+composer lint            # Pint
+composer analyse         # PHPStan
+composer type-coverage   # Pest type coverage (must stay at 100%)
 ```
+
+## Contributing
+
+Pull requests are welcome — bug fixes, new features, better docs, or just a typo you spotted.
+
+**1. Fork and clone**
+
+Fork the repository on GitHub, then:
+
+```bash
+git clone git@github.com:YOUR-USERNAME/filament-bug-reports.git
+cd filament-bug-reports
+composer install
+```
+
+**2. Branch**
+
+Never work on `main` — branch off it, and name the branch after what it does:
+
+```bash
+git switch -c fix/sync-skips-deleted-issues
+```
+
+**3. Make the change**
+
+Write a test for it. If it touches the panel UI, a before/after screenshot in the PR helps a lot.
+
+**4. Run the same gates CI runs**
+
+A PR that passes these locally will pass on CI:
+
+```bash
+composer lint && composer analyse && composer test && composer type-coverage
+```
+
+**5. Commit**
+
+Commits follow [Conventional Commits](https://www.conventionalcommits.org/) — the release tooling reads them:
+
+```bash
+git commit -m "fix: skip issues that no longer exist on GitHub"
+```
+
+**6. Update the changelog**
+
+Add a line under `## [Unreleased]` in [CHANGELOG.md](CHANGELOG.md), under the heading that matches your change (✨ Added, 🔄 Changed, ⚠️ Deprecated, 🗑️ Removed, 🐛 Fixed, 🔒 Security).
+
+**7. Open the pull request**
+
+Push your branch and open a PR against `main`. The [template](.github/PULL_REQUEST_TEMPLATE.md) will walk you through the rest.
+
+```bash
+git push -u origin fix/sync-skips-deleted-issues
+```
+
+Don't worry about getting every box ticked — open the PR and say what you're unsure about. It's easier to help you over the line than to have you not send it.
 
 ## License
 
