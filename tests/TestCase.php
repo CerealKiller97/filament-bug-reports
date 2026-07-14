@@ -31,10 +31,9 @@ abstract class TestCase extends Orchestra
      * Orchestra declares `$app` untyped, so a native type here narrows the
      * parameter and is a fatal LSP violation. Keep it in the docblock.
      *
-     * @param  Application  $app
      * @return array<int, class-string>
      */
-    protected function getPackageProviders($app): array
+    protected function getPackageProviders(Application $app): array
     {
         return [
             BladeIconsServiceProvider::class,
@@ -65,10 +64,7 @@ abstract class TestCase extends Orchestra
         ];
     }
 
-    /**
-     * @param  Application  $app
-     */
-    protected function defineEnvironment($app): void
+    protected function defineEnvironment(Application $app): void
     {
         $app['config']->set('app.version', 'test-version');
         $app['config']->set('bug-reports.user_model', User::class);
