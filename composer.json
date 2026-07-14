@@ -2,7 +2,7 @@
     "name": "cerealkiller97/filament-bug-reports",
     "description": "A Filament plugin to collect in-app bug reports and push validated ones to GitHub issues.",
     "keywords": ["filament", "laravel", "bug-reports", "github", "issues", "plugin"],
-    "license": "MIT",
+    "license": "Apache-2.0",
     "authors": [
         {
             "name": "CerealKiller97"
