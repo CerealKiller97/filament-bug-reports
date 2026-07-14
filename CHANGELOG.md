@@ -26,8 +26,15 @@ Each release groups its changes under the following headings, and omits any that
 - `bug-reports:sync` command, scheduled hourly by default, mirroring each linked issue's state back onto its report (closed becomes *Resolved*, reopened flips back to *In progress*).
 - **Sync with GitHub** header action to run that sync on demand from the list page.
 - Permission hooks on the plugin: `authorizeManagementUsing()`, `authorizeReportingUsing()` and `resolveReporterRoleUsing()`. Management defaults to nobody; reporting defaults to every authenticated user.
+- Reports are stamped server-side with the reporter, their resolved role and the running app version — the reporter is never asked for any of it.
 - Configurable GitHub labels, assignees and issue title prefix.
 - Configurable screenshot disk, directory and max upload size.
+- Configurable `user_model`, so the package works against any users table.
+- Publishable config, migration and translations (`bug-reports-config`, `bug-reports-migrations`, `bug-reports-translations`).
 - English and Serbian translations.
+
+### 🐛 Fixed
+
+- Pushing a report to GitHub, and syncing issue state, now raise the intended "GitHub is not configured" `RuntimeException` when the token or repository is missing, instead of an unrelated `InvalidArgumentException` from the config repository.
 
 [Unreleased]: https://github.com/CerealKiller97/filament-bug-reports/commits/main
