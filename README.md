@@ -15,7 +15,8 @@ Your users get a **Report a bug** button in the panel's topbar and a short, plai
 
 ## Requirements
 
-- PHP 8.4+
+- PHP 8.3+
+- Laravel 13.x
 - Filament 5.x
 
 ## Installation

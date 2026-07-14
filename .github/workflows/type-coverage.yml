@@ -22,7 +22,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.4'
+          php-version: '8.3'
           extensions: dom, curl, libxml, mbstring, zip, pcntl, bcmath, intl, fileinfo, sqlite3, pdo_sqlite
           # The type-coverage analyser blows past the default 128M limit.
           ini-values: memory_limit=-1
@@ -32,8 +32,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/composer/files
-          key: composer-8.4-${{ hashFiles('composer.json') }}
-          restore-keys: composer-8.4-
+          key: composer-8.3-${{ hashFiles('composer.json') }}
+          restore-keys: composer-8.3-
 
       - name: Install dependencies
         run: composer update --prefer-dist --no-interaction --no-progress
