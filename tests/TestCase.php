@@ -22,15 +22,15 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Livewire\LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
+use Illuminate\Foundation\Application;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
 
 abstract class TestCase extends Orchestra
 {
     /**
-     * @param  \Illuminate\Foundation\Application  $app
      * @return array<int, class-string>
      */
-    protected function getPackageProviders($app): array
+    protected function getPackageProviders(Application $app): array
     {
         return [
             LivewireServiceProvider::class,
@@ -51,16 +51,13 @@ abstract class TestCase extends Orchestra
         ];
     }
 
-    /**
-     * @param  \Illuminate\Foundation\Application  $app
-     */
-    protected function defineEnvironment($app): void
+    protected function defineEnvironment(Application $app): void
     {
         $app['config']->set('app.version', 'test-version');
         $app['config']->set('bug-reports.user_model', User::class);
         // GitHub unset by default; individual tests configure it.
-        $app['config']->set('bug-reports.github.token', null);
-        $app['config']->set('bug-reports.github.repository', null);
+        $app['config']->set('bug-reports.github.token', 'random-token');
+        $app['config']->set('bug-reports.github.repository', 'CerealKiller97/SomeRepo');
         // Don't register the hourly schedule during tests.
         $app['config']->set('bug-reports.sync.enabled', false);
     }

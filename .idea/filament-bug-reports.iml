@@ -175,6 +175,9 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/vlucas/phpdotenv" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/voku/portable-ascii" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/webmozart/assert" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/nunomaduro/pokio" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/pestphp/pest-plugin-type-coverage" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/tomasvotruba/type-coverage" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
