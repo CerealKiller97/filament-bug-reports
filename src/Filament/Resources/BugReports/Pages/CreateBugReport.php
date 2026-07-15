@@ -7,13 +7,49 @@ namespace CerealKiller97\FilamentBugReports\Filament\Resources\BugReports\Pages;
 use CerealKiller97\FilamentBugReports\BugReportsPlugin;
 use CerealKiller97\FilamentBugReports\Filament\Resources\BugReportResource;
 use CerealKiller97\FilamentBugReports\Filament\Resources\BugReports\Schemas\BugReportForm;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Contracts\Support\Htmlable;
 
 class CreateBugReport extends CreateRecord
 {
     protected static string $resource = BugReportResource::class;
+
+    /**
+     * Fixed page heading, overriding Filament's "Create {label}" default which
+     * reads awkwardly here — this is a report action, not a CRUD create.
+     */
+    public function getTitle(): string|Htmlable
+    {
+        return __('bug-reports::bug-reports.create.title');
+    }
+
+    /**
+     * Relabel the submit button to match the report framing.
+     */
+    protected function getCreateFormAction(): Action
+    {
+        return parent::getCreateFormAction()->label(__('bug-reports::bug-reports.create.actions.create'));
+    }
+
+    /**
+     * Relabel the "create & create another" button to match the report framing.
+     */
+    protected function getCreateAnotherFormAction(): Action
+    {
+        return parent::getCreateAnotherFormAction()->label(__('bug-reports::bug-reports.create.actions.create_another'));
+    }
+
+    /**
+     * Match the report framing on the trailing breadcrumb, overriding Filament's
+     * "Create" default.
+     */
+    public function getBreadcrumb(): string
+    {
+        return __('bug-reports::bug-reports.create.breadcrumb');
+    }
 
     /**
      * The report list is manager-only, so send everyone else back to the

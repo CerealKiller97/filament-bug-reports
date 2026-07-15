@@ -8,6 +8,15 @@ return [
     'plural_model_label' => 'Prijave grešaka',
     'report_button' => 'Prijavi grešku',
 
+    'create' => [
+        'title' => 'Prijavi grešku',
+        'breadcrumb' => 'Prijavi',
+        'actions' => [
+            'create' => 'Prijavi',
+            'create_another' => 'Prijavi i dodaj još jednu',
+        ],
+    ],
+
     'form' => [
         'title' => 'Šta ne radi?',
         'title_placeholder' => 'Ukratko opišite problem, npr. "Ne mogu da sačuvam vožnju"',

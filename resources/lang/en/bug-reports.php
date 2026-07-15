@@ -8,6 +8,15 @@ return [
     'plural_model_label' => 'Bug reports',
     'report_button' => 'Report a bug',
 
+    'create' => [
+        'title' => 'Report a bug',
+        'breadcrumb' => 'Report',
+        'actions' => [
+            'create' => 'Report',
+            'create_another' => 'Report and add another',
+        ],
+    ],
+
     'form' => [
         'title' => 'What is wrong?',
         'title_placeholder' => 'Briefly describe the problem, e.g. "I can\'t save a ride"',
