@@ -41,8 +41,11 @@ final class SyncBugReportGithubIssues
                 ->withHeaders(['X-GitHub-Api-Version' => '2022-11-28'])
                 ->get(sprintf('https://api.github.com/repos/%s/issues/%d', $repository, $report->github_issue_number));
 
-            // Skip issues that no longer exist rather than aborting the whole run.
-            if ($response->status() === 404) {
+            // Skip issues that no longer exist rather than aborting the whole
+            // run. GitHub answers 404 for an issue it won't show us (never
+            // existed, or no access) and 410 for one that was deleted — both
+            // mean "there is nothing left to mirror here".
+            if (in_array($response->status(), [404, 410], true)) {
                 continue;
             }
 

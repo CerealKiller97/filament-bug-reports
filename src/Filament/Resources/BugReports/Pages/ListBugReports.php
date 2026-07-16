@@ -6,11 +6,13 @@ namespace CerealKiller97\FilamentBugReports\Filament\Resources\BugReports\Pages;
 
 use CerealKiller97\FilamentBugReports\Actions\SyncBugReportGithubIssues;
 use CerealKiller97\FilamentBugReports\Filament\Resources\BugReportResource;
+use CerealKiller97\FilamentBugReports\Filament\Resources\BugReports\Widgets\BugReportsStatsWidget;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Icons\Heroicon;
+use Filament\Widgets\Widget;
 use Throwable;
 
 class ListBugReports extends ListRecords
@@ -24,6 +26,14 @@ class ListBugReports extends ListRecords
     protected function authorizeAccess(): void
     {
         abort_unless(BugReportResource::canViewAny(), 403);
+    }
+
+    /**
+     * @return array<class-string<Widget>>
+     */
+    protected function getHeaderWidgets(): array
+    {
+        return [BugReportsStatsWidget::class];
     }
 
     /**
@@ -48,6 +58,8 @@ class ListBugReports extends ListRecords
 
                         return;
                     }
+
+                    $this->dispatch(BugReportsStatsWidget::REFRESH_EVENT);
 
                     Notification::make()
                         ->success()

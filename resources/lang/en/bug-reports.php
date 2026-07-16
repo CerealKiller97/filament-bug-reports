@@ -49,6 +49,18 @@ return [
         'reported_by' => 'Reported by',
         'reported_at' => 'Reported at',
         'empty' => 'No bug reports',
+        'untriaged' => 'Not triaged',
+    ],
+
+    'stats' => [
+        'untriaged' => 'Awaiting triage',
+        'untriaged_description' => 'Reported, not yet looked at',
+        'burning' => 'Urgent and high',
+        'burning_description' => 'Open, and hurting',
+        'in_progress' => 'In progress',
+        'in_progress_description' => 'Open on GitHub',
+        'resolved' => 'Resolved',
+        'resolved_description' => 'Issue closed',
     ],
 
     'filters' => [

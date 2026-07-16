@@ -97,6 +97,21 @@ The **Report a bug** button is injected into the topbar next to global search, s
 
 Steps are a repeater — reporters add and reorder them one at a time, which tends to produce far better reproduction steps than a free-text box. The screenshot is optional and capped at 5 MB by default.
 
+## The triage table
+
+Four stats sit above the list, answering the questions a manager opens the page with:
+
+| | |
+|---|---|
+| **Awaiting triage** | Reported, nobody has looked yet. Goes amber while the queue is non-empty. |
+| **Urgent and high** | Open and hurting. Goes red while any exist. |
+| **In progress** | Pushed to GitHub, issue still open. |
+| **Resolved** | Issue closed. |
+
+"Urgent and high" counts only *unresolved* reports — closing the issue takes a bug off the fire, whatever its priority.
+
+Rows can be grouped by **priority**, **reported at**, **reported by** or **app version**, and every group is collapsible. Grouping by priority orders the groups by urgency rather than alphabetically, and reports that haven't been triaged collect under *Not triaged* instead of a blank heading.
+
 ## Triaging and creating the issue
 
 **Mark as real** asks for confirmation and a priority — low, medium, high or urgent — then creates the GitHub issue:
@@ -218,7 +233,9 @@ You can also run it by hand, or from the **Sync with GitHub** button on the list
 php artisan bug-reports:sync
 ```
 
-Each linked issue is fetched and mirrored: a closed issue sets `resolved_at` to the issue's `closed_at`, reopening clears it. Issues that have been deleted from GitHub (404) are skipped rather than failing the run.
+Each linked issue is fetched and mirrored: a closed issue sets `resolved_at` to the issue's `closed_at`, reopening clears it.
+
+An issue that no longer exists is skipped rather than failing the run — both the `404` GitHub returns for an issue it won't show you (never existed, or the token can't see it) and the `410 Gone` it returns for one that was **deleted**. The report keeps its issue number and URL, pointing at a page that is gone; the link is deliberately not cleared, because a deleted issue is far more often a mistake to undo than a fact to record.
 
 If you'd rather schedule it yourself, set `sync.enabled` to `false` and call `bug-reports:sync` from your own scheduler.
 

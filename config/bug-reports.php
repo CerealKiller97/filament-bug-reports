@@ -77,7 +77,7 @@ return [
         'milestone' => env('BUG_REPORTS_GITHUB_MILESTONE', ''),
 
         // The name of an issue type, e.g. 'Bug'. Organisation repositories only.
-        'type' => env('BUG_REPORTS_GITHUB_TYPE', ''),
+        'type' => env('BUG_REPORTS_GITHUB_TYPE', 'Bug'),
 
         // Issue field values, for organisation repositories that have them
         // enabled: [['field_id' => 123, 'value' => 'Platform'], ...].

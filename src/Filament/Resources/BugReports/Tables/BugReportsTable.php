@@ -6,6 +6,7 @@ namespace CerealKiller97\FilamentBugReports\Filament\Resources\BugReports\Tables
 
 use CerealKiller97\FilamentBugReports\Enums\BugPriority;
 use CerealKiller97\FilamentBugReports\Filament\Resources\BugReports\Actions\MarkBugReportAsRealAction;
+use CerealKiller97\FilamentBugReports\Filament\Resources\BugReports\Widgets\BugReportsStatsWidget;
 use CerealKiller97\FilamentBugReports\Models\BugReport;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -13,8 +14,10 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Database\Eloquent\Builder;
+use Livewire\Component;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Grouping\Group;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
@@ -92,13 +95,49 @@ class BugReportsTable
                     ->trueLabel(__('bug-reports::bug-reports.filters.validated_true'))
                     ->falseLabel(__('bug-reports::bug-reports.filters.validated_false')),
             ])
+            ->groups([
+                // Ordered by urgency, same as the column sort — grouping by the
+                // raw value would ladder the groups alphabetically.
+                Group::make('priority')
+                    ->label(__('bug-reports::bug-reports.table.priority'))
+                    ->getTitleFromRecordUsing(fn (BugReport $record): string => $record->priority?->getLabel()
+                        ?? (string) __('bug-reports::bug-reports.table.untriaged'))
+                    ->orderQueryUsing(self::sortByPriorityRank(...))
+                    ->collapsible(),
+                Group::make('created_at')
+                    ->label(__('bug-reports::bug-reports.table.reported_at'))
+                    ->date()
+                    ->collapsible(),
+                Group::make('user.name')
+                    ->label(__('bug-reports::bug-reports.table.reported_by'))
+                    ->collapsible(),
+                Group::make('app_version')
+                    ->label(__('bug-reports::bug-reports.table.version'))
+                    ->collapsible(),
+            ])
             ->defaultSort('created_at', 'desc')
             ->recordActions([
                 ViewAction::make(),
                 MarkBugReportAsRealAction::make(),
-                DeleteAction::make()->successNotificationTitle(__('bug-reports::bug-reports.notifications.deleted')),
+                DeleteAction::make()
+                    ->successNotificationTitle(__('bug-reports::bug-reports.notifications.deleted'))
+                    ->after(self::refreshStats(...)),
             ])
-            ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make()->after(self::refreshStats(...)),
+                ]),
+            ]);
+    }
+
+    /**
+     * Deleting a report changes what the stats above the table say, and the
+     * widget is a separate Livewire component that would otherwise never hear
+     * about it.
+     */
+    private static function refreshStats(Component $livewire): void
+    {
+        $livewire->dispatch(BugReportsStatsWidget::REFRESH_EVENT);
     }
 
     /**

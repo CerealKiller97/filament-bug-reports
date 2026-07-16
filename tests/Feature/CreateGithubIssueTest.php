@@ -123,6 +123,44 @@ test('unset github options are omitted rather than sent as null', function (): v
     });
 });
 
+test('it omits the reporter role when there is none rather than printing empty parens', function (): void {
+    config()->set('bug-reports.github.repository', 'acme/repo');
+    config()->set('bug-reports.github.token', 'secret');
+
+    Http::fake([
+        'api.github.com/*' => Http::response(['html_url' => 'https://github.com/acme/repo/issues/5', 'number' => 5], 201),
+    ]);
+
+    // `resolveReporterRoleUsing()` is optional, so the column defaults to ''.
+    $user = makeUser(false);
+    $user->forceFill(['name' => 'Stefan'])->save();
+
+    $report = BugReport::factory()->create(['role' => '', 'user_id' => $user->getKey()]);
+
+    app(CreateBugReportGithubIssue::class)->handle($report);
+
+    Http::assertSent(fn (Request $request): bool => str_contains((string) $request['body'], 'Reported by:** Stefan')
+        && ! str_contains((string) $request['body'], 'Stefan ()'));
+});
+
+test('it keeps the reporter role when one is configured', function (): void {
+    config()->set('bug-reports.github.repository', 'acme/repo');
+    config()->set('bug-reports.github.token', 'secret');
+
+    Http::fake([
+        'api.github.com/*' => Http::response(['html_url' => 'https://github.com/acme/repo/issues/6', 'number' => 6], 201),
+    ]);
+
+    $user = makeUser(false);
+    $user->forceFill(['name' => 'Stefan'])->save();
+
+    $report = BugReport::factory()->create(['role' => 'developer', 'user_id' => $user->getKey()]);
+
+    app(CreateBugReportGithubIssue::class)->handle($report);
+
+    Http::assertSent(fn (Request $request): bool => str_contains((string) $request['body'], 'Reported by:** Stefan (developer)'));
+});
+
 test('it is idempotent and does not create a second issue', function (): void {
     Http::fake();
     $report = BugReport::factory()->validated()->create();

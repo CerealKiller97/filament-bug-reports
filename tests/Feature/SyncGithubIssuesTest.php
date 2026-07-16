@@ -57,6 +57,29 @@ test('it skips issues that no longer exist without failing', function (): void {
         ->and($report->refresh()->resolved_at)->toBeNull();
 });
 
+test('a deleted issue is skipped and does not abort the rest of the run', function (): void {
+    // GitHub answers 410 Gone once an issue has actually been deleted, which
+    // used to blow up the whole run and leave every later report unsynced.
+    $deleted = BugReport::factory()->validated()->create(['github_issue_number' => 410]);
+    $closed = BugReport::factory()->validated()->create(['github_issue_number' => 11]);
+
+    Http::fake([
+        'api.github.com/repos/acme/repo/issues/410' => Http::response([
+            'message' => 'This issue was deleted',
+        ], 410),
+        'api.github.com/repos/acme/repo/issues/11' => Http::response([
+            'state' => 'closed',
+            'closed_at' => '2026-07-13T10:00:00Z',
+        ], 200),
+    ]);
+
+    $changed = app(SyncBugReportGithubIssues::class)->handle();
+
+    expect($changed)->toBe(1)
+        ->and($deleted->refresh()->resolved_at)->toBeNull()
+        ->and($closed->refresh()->resolved_at)->not->toBeNull();
+});
+
 test('it ignores reports that were never pushed to github', function (): void {
     BugReport::factory()->create(['github_issue_number' => null]);
     Http::fake();
