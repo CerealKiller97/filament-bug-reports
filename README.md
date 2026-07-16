@@ -11,7 +11,9 @@ Collect bug reports from inside your Filament panel, and push the ones you confi
 
 Your users get a **Report a bug** button in the panel's topbar and a short, plain-language form — no Markdown, no issue templates, no GitHub account. You get a triage table where a single click turns a report into a proper GitHub issue, and the issue's state (open/closed) is mirrored back onto the report automatically.
 
-![Triage table](art/triage-table.png)
+| Dark | Light |
+| --- | --- |
+| ![Triage table in dark mode](art/triage-table-dark.png) | ![Triage table in light mode](art/triage-table-light.png) |
 
 ## How it works
 
@@ -89,7 +91,9 @@ Non-managers never see the resource in the navigation, and the list page returns
 
 The **Report a bug** button is injected into the topbar next to global search, so it's reachable from every page in the panel.
 
-![Report form](art/report-form.png)
+| Dark | Light |
+| --- | --- |
+| ![Report form in dark mode](art/report-form-dark.png) | ![Report form in light mode](art/report-form-light.png) |
 
 Steps are a repeater — reporters add and reorder them one at a time, which tends to produce far better reproduction steps than a free-text box. The screenshot is optional and capped at 5 MB by default.
 
@@ -97,7 +101,11 @@ Steps are a repeater — reporters add and reorder them one at a time, which ten
 
 **Mark as real** asks for confirmation and a priority — low, medium, high or urgent — then creates the GitHub issue:
 
-![Mark as real](art/mark-as-real.png)
+| Dark | Light |
+| --- | --- |
+| ![Mark as real modal in dark mode](art/mark-as-real-dark.png) | ![Mark as real modal in light mode](art/mark-as-real-light.png) |
+
+Each option carries its own colour — green, amber, red, magenta — and keeps it when it becomes a badge in the table.
 
 The priority is stored on the report, so the table can be sorted and filtered by it. Sorting ranks the values by urgency rather than alphabetically, and untriaged reports rank below every triaged one.
 
