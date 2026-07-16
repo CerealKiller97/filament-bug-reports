@@ -8,6 +8,13 @@ return [
     'plural_model_label' => 'Bug reports',
     'report_button' => 'Report a bug',
 
+    'priority' => [
+        'low' => 'Low',
+        'medium' => 'Medium',
+        'high' => 'High',
+        'urgent' => 'Urgent',
+    ],
+
     'create' => [
         'title' => 'Report a bug',
         'breadcrumb' => 'Report',
@@ -26,10 +33,13 @@ return [
         'add_step' => 'Add step',
         'screenshot' => 'Screenshot (optional)',
         'screenshot_helper' => 'A screenshot helps us understand the problem fastest.',
+        'priority' => 'Priority',
+        'priority_helper' => 'How urgent is this bug?',
     ],
 
     'table' => [
         'problem' => 'Problem',
+        'priority' => 'Priority',
         'github' => 'GitHub',
         'state' => 'State',
         'state_pending' => 'In progress',
@@ -42,6 +52,7 @@ return [
     ],
 
     'filters' => [
+        'priority' => 'Priority',
         'validated' => 'Real bugs',
         'validated_true' => 'Marked as real',
         'validated_false' => 'Not handled yet',
@@ -50,7 +61,7 @@ return [
     'actions' => [
         'mark_as_real' => 'Mark as real',
         'mark_as_real_heading' => 'Mark as a real bug?',
-        'mark_as_real_description' => 'A GitHub issue will be created with the bug details.',
+        'mark_as_real_description' => 'A GitHub issue will be created with the bug details and the priority you pick.',
         'mark_as_real_submit' => 'Create issue',
         'delete' => 'Delete',
         'sync' => 'Sync with GitHub',
@@ -72,6 +83,7 @@ return [
         'not_configured' => 'GitHub is not configured (bug-reports.github.token / repository).',
         'details' => 'Details',
         'reported_by' => 'Reported by',
+        'priority' => 'Priority',
         'app_version' => 'App version',
         'reported_at' => 'Reported at',
         'steps' => 'Steps to reproduce',

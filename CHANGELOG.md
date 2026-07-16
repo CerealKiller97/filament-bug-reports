@@ -28,6 +28,8 @@ Each release groups its changes under the following headings, and omits any that
 - Permission hooks on the plugin: `authorizeManagementUsing()`, `authorizeReportingUsing()` and `resolveReporterRoleUsing()`. Management defaults to nobody; reporting defaults to every authenticated user.
 - Reports are stamped server-side with the reporter, their resolved role and the running app version — the reporter is never asked for any of it.
 - Configurable GitHub labels, assignees and issue title prefix.
+- Full coverage of GitHub's create-an-issue options: `milestone`, `type` and `issue_field_values` join `labels` and `assignees` under `github` in the config. Options left empty are omitted from the request rather than sent as `null`.
+- Bug priority: **Mark as real** now asks for a low/medium/high/urgent priority, stores it on the report, and adds it to the created issue's body and labels. The table gains a priority column — sorted by urgency, not alphabetically — and a filter, and `github.priority_labels` maps each priority to the label of your choice.
 - Configurable screenshot disk, directory and max upload size.
 - Configurable `user_model`, so the package works against any users table.
 - Publishable config, migration and translations (`bug-reports-config`, `bug-reports-migrations`, `bug-reports-translations`).

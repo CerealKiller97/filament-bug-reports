@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CerealKiller97\FilamentBugReports\Filament\Resources\BugReports\Tables;
 
+use CerealKiller97\FilamentBugReports\Enums\BugPriority;
 use CerealKiller97\FilamentBugReports\Filament\Resources\BugReports\Actions\MarkBugReportAsRealAction;
 use CerealKiller97\FilamentBugReports\Models\BugReport;
 use Filament\Actions\BulkActionGroup;
@@ -11,8 +12,10 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
@@ -28,6 +31,11 @@ class BugReportsTable
                     ->label(__('bug-reports::bug-reports.table.problem'))
                     ->wrap()
                     ->searchable(),
+                TextColumn::make('priority')
+                    ->label(__('bug-reports::bug-reports.table.priority'))
+                    ->badge()
+                    ->placeholder('—')
+                    ->sortable(query: self::sortByPriorityRank(...)),
                 TextColumn::make('github_issue_number')
                     ->label(__('bug-reports::bug-reports.table.github'))
                     ->badge()
@@ -74,6 +82,10 @@ class BugReportsTable
                     ->sortable(),
             ])
             ->filters([
+                SelectFilter::make('priority')
+                    ->label(__('bug-reports::bug-reports.filters.priority'))
+                    ->options(BugPriority::class)
+                    ->multiple(),
                 TernaryFilter::make('validated_at')
                     ->label(__('bug-reports::bug-reports.filters.validated'))
                     ->nullable()
@@ -87,5 +99,29 @@ class BugReportsTable
                 DeleteAction::make()->successNotificationTitle(__('bug-reports::bug-reports.notifications.deleted')),
             ])
             ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make()])]);
+    }
+
+    /**
+     * Order by how urgent a priority actually is, rather than by the
+     * alphabetical order of the stored values. Untriaged reports have no
+     * priority and rank below every triaged one.
+     *
+     * @param  Builder<BugReport>  $query
+     * @return Builder<BugReport>
+     */
+    private static function sortByPriorityRank(Builder $query, string $direction): Builder
+    {
+        $direction = strtolower($direction) === 'desc' ? 'desc' : 'asc';
+
+        $cases = '';
+        $bindings = [];
+
+        foreach (BugPriority::cases() as $priority) {
+            $cases .= ' when ? then ?';
+            $bindings[] = $priority->value;
+            $bindings[] = $priority->rank();
+        }
+
+        return $query->orderByRaw("case priority{$cases} else 0 end {$direction}", $bindings);
     }
 }

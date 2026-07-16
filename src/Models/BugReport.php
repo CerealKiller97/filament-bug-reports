@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CerealKiller97\FilamentBugReports\Models;
 
 use CerealKiller97\FilamentBugReports\Database\Factories\BugReportFactory;
+use CerealKiller97\FilamentBugReports\Enums\BugPriority;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,6 +19,7 @@ use Illuminate\Support\Carbon;
  * @property-read  string|null $screenshot_path
  * @property-read  string $app_version
  * @property-read  string $role
+ * @property-read  BugPriority|null $priority
  * @property-read  Carbon|null $validated_at
  * @property-read  string|null $github_issue_url
  * @property-read  int|null $github_issue_number
@@ -41,6 +43,7 @@ class BugReport extends Model
         'screenshot_path',
         'app_version',
         'role',
+        'priority',
         'validated_at',
         'github_issue_url',
         'github_issue_number',
@@ -78,12 +81,13 @@ class BugReport extends Model
     }
 
     /**
-     * @return array<string, string>
+     * @return array<string, string|class-string>
      */
     protected function casts(): array
     {
         return [
             'steps' => 'array',
+            'priority' => BugPriority::class,
             'validated_at' => 'datetime',
             'resolved_at' => 'datetime',
         ];

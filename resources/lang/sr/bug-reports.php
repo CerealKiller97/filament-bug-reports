@@ -8,6 +8,13 @@ return [
     'plural_model_label' => 'Prijave grešaka',
     'report_button' => 'Prijavi grešku',
 
+    'priority' => [
+        'low' => 'Nizak',
+        'medium' => 'Srednji',
+        'high' => 'Visok',
+        'urgent' => 'Hitan',
+    ],
+
     'create' => [
         'title' => 'Prijavi grešku',
         'breadcrumb' => 'Prijavi',
@@ -26,10 +33,13 @@ return [
         'add_step' => 'Dodaj korak',
         'screenshot' => 'Snimak ekrana (opciono)',
         'screenshot_helper' => 'Slika ekrana najbrže pomaže da razumemo problem.',
+        'priority' => 'Prioritet',
+        'priority_helper' => 'Koliko je ova greška hitna?',
     ],
 
     'table' => [
         'problem' => 'Problem',
+        'priority' => 'Prioritet',
         'github' => 'GitHub',
         'state' => 'Stanje',
         'state_pending' => 'U toku',
@@ -42,6 +52,7 @@ return [
     ],
 
     'filters' => [
+        'priority' => 'Prioritet',
         'validated' => 'Stvarne greške',
         'validated_true' => 'Označene kao stvarne',
         'validated_false' => 'Još nisu obrađene',
@@ -50,7 +61,7 @@ return [
     'actions' => [
         'mark_as_real' => 'Označi kao stvarni',
         'mark_as_real_heading' => 'Označi kao stvarnu grešku?',
-        'mark_as_real_description' => 'Napraviće se GitHub issue sa opisom greške i oznakom „bug".',
+        'mark_as_real_description' => 'Napraviće se GitHub issue sa opisom greške i prioritetom koji izaberete.',
         'mark_as_real_submit' => 'Napravi issue',
         'delete' => 'Obriši',
         'sync' => 'Sinhronizuj sa GitHub-om',
@@ -72,6 +83,7 @@ return [
         'not_configured' => 'GitHub integracija nije podešena (bug-reports.github.token / repository).',
         'details' => 'Detalji',
         'reported_by' => 'Prijavio',
+        'priority' => 'Prioritet',
         'app_version' => 'Verzija aplikacije',
         'reported_at' => 'Prijavljeno',
         'steps' => 'Koraci za reprodukciju',

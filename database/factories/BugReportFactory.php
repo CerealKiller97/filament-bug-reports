@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CerealKiller97\FilamentBugReports\Database\Factories;
 
+use CerealKiller97\FilamentBugReports\Enums\BugPriority;
 use CerealKiller97\FilamentBugReports\Models\BugReport;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -29,6 +30,7 @@ class BugReportFactory extends Factory
             'screenshot_path' => null,
             'app_version' => 'v'.fake()->numerify('#.#.#'),
             'role' => fake()->randomElement(['admin', 'manager', 'user']),
+            'priority' => null,
             'validated_at' => null,
             'github_issue_url' => null,
             'github_issue_number' => null,
@@ -46,6 +48,7 @@ class BugReportFactory extends Factory
             $number = fake()->numberBetween(1, 999);
 
             return [
+                'priority' => fake()->randomElement(BugPriority::cases()),
                 'validated_at' => now(),
                 'github_issue_number' => $number,
                 'github_issue_url' => "https://github.com/acme/repo/issues/{$number}",

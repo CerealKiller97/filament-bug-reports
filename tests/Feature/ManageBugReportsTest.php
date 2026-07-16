@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use CerealKiller97\FilamentBugReports\Enums\BugPriority;
 use CerealKiller97\FilamentBugReports\Filament\Resources\BugReportResource;
 use CerealKiller97\FilamentBugReports\Filament\Resources\BugReports\Pages\ListBugReports;
 use CerealKiller97\FilamentBugReports\Models\BugReport;
@@ -48,15 +49,49 @@ test('a manager marks a bug as real, creating a labelled github issue', function
     $report = BugReport::factory()->create(['title' => 'Boom', 'steps' => ['Step one']]);
 
     livewire(ListBugReports::class)
-        ->callTableAction('markAsReal', $report);
+        ->callTableAction('markAsReal', $report, ['priority' => 'high']);
 
     $report->refresh();
 
     expect($report->github_issue_url)->toBe('https://github.com/acme/repo/issues/7')
-        ->and($report->validated_at)->not->toBeNull();
+        ->and($report->validated_at)->not->toBeNull()
+        ->and($report->priority)->toBe(BugPriority::High);
 
     Http::assertSent(fn (Request $request): bool => $request['title'] === '[In App] Boom'
-        && $request['labels'] === ['bug']);
+        && $request['labels'] === ['bug', 'priority: high']);
+});
+
+test('the priority column sorts by urgency, not alphabetically', function (): void {
+    actingAs(makeUser(true));
+
+    // Created out of order, and alphabetically these would come back as
+    // high, low, medium, urgent.
+    $medium = BugReport::factory()->create(['priority' => BugPriority::Medium]);
+    $urgent = BugReport::factory()->create(['priority' => BugPriority::Urgent]);
+    $untriaged = BugReport::factory()->create(['priority' => null]);
+    $low = BugReport::factory()->create(['priority' => BugPriority::Low]);
+    $high = BugReport::factory()->create(['priority' => BugPriority::High]);
+
+    livewire(ListBugReports::class)
+        ->call('loadTable')
+        ->sortTable('priority', 'desc')
+        ->assertCanSeeTableRecords([$urgent, $high, $medium, $low, $untriaged], inOrder: true)
+        ->sortTable('priority', 'asc')
+        ->assertCanSeeTableRecords([$untriaged, $low, $medium, $high, $urgent], inOrder: true);
+});
+
+test('marking a bug as real requires a priority', function (): void {
+    Http::fake();
+
+    actingAs(makeUser(true));
+    $report = BugReport::factory()->create();
+
+    livewire(ListBugReports::class)
+        ->callTableAction('markAsReal', $report, ['priority' => null])
+        ->assertHasTableActionErrors(['priority' => ['required']]);
+
+    expect($report->refresh()->github_issue_url)->toBeNull();
+    Http::assertNothingSent();
 });
 
 test('the mark as real action is hidden once the report is validated', function (): void {
