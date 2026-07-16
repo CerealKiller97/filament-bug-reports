@@ -1,0 +1,15 @@
+---
+title: Translations
+description: Changing the wording, and the languages that ship.
+---
+
+Ships with English (`en`) and Serbian (`sr`).
+
+To change any wording:
+
+```bash
+php artisan vendor:publish --tag=bug-reports-translations
+```
+
+The published files land in `lang/vendor/bug-reports/` and override the
+package's own.

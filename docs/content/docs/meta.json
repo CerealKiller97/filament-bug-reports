@@ -1,0 +1,19 @@
+{
+  "title": "Documentation",
+  "root": true,
+  "pages": [
+    "index",
+    "installation",
+    "---Using it---",
+    "authorization",
+    "reporting",
+    "triage",
+    "github-issues",
+    "sync",
+    "---Reference---",
+    "configuration",
+    "translations",
+    "---Project---",
+    "contributing"
+  ]
+}

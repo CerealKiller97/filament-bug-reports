@@ -1,0 +1,36 @@
+---
+title: Authorization
+description: Who can file a report, and who can triage one.
+---
+
+The two audiences are separate, and they default differently.
+
+| | Report a bug | See the list, view, triage, delete |
+| --- | --- | --- |
+| **Default** | any authenticated panel user | nobody |
+| **Configured with** | `authorizeReportingUsing()` | `authorizeManagementUsing()` |
+
+```php
+BugReportsPlugin::make()
+    // Who may triage reports and push them to GitHub. Default: nobody.
+    ->authorizeManagementUsing(fn (User $user): bool => $user->hasRole('developer'))
+
+    // Who may file a report. Default: every authenticated user.
+    ->authorizeReportingUsing(fn (User $user): bool => $user->isStaff())
+
+    // A label stored alongside the report, so you know who hit the bug.
+    // Shows under the reporter's name in the table and in the GitHub issue.
+    ->resolveReporterRoleUsing(fn (User $user): string => $user->role->label());
+```
+
+<Callout title="Why management defaults to closed">
+Reporting is harmless, so it's open by default. Triage exposes every report in
+the panel and can create public GitHub issues, so it stays shut until you name
+someone.
+</Callout>
+
+## What non-managers see
+
+Non-managers never see the resource in the navigation, and the list page returns
+a 403 for them. They only ever reach the create form — via the topbar button —
+and are redirected back to the panel home after submitting.

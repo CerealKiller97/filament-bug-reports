@@ -1,0 +1,81 @@
+---
+title: Introduction
+description: Collect bug reports from inside your Filament panel, and push the ones you confirm are real straight to GitHub as issues.
+---
+
+Your users get a **Report a bug** button in the panel's topbar and a short,
+plain-language form — no Markdown, no issue templates, no GitHub account. You
+get a triage table where a single click turns a report into a proper GitHub
+issue, and the issue's state (open/closed) is mirrored back onto the report
+automatically.
+
+<ThemedImage
+  light="/art/triage-table-light.png"
+  dark="/art/triage-table-dark.png"
+  alt="The triage table, showing bug reports with priority badges and stats above the list"
+/>
+
+## How it works
+
+<Steps>
+
+<Step>
+
+### Anyone in the panel reports a bug
+
+They describe the problem, list the steps that led to it, and optionally attach
+a screenshot. The report is stamped with the reporter, their role and the
+running app version — they aren't asked for any of it.
+
+</Step>
+
+<Step>
+
+### A manager triages
+
+Reports land in a table only managers can see. Noise gets deleted; the real ones
+get **Mark as real**.
+
+</Step>
+
+<Step>
+
+### A GitHub issue is created
+
+With the steps and screenshot formatted into the body. The issue number and URL
+are stored on the report.
+
+</Step>
+
+<Step>
+
+### State syncs back
+
+An hourly command checks each linked issue: closed becomes *Resolved*, reopened
+flips back to *In progress*.
+
+</Step>
+
+</Steps>
+
+## Requirements
+
+| Requires | Version |
+| --- | --- |
+| PHP | 8.3+ |
+| Laravel | 13.x |
+| Filament | 5.x |
+
+## Next steps
+
+<Cards>
+  <Card title="Installation" href="/docs/installation">
+    Install the package, publish the migration, register the plugin.
+  </Card>
+  <Card title="Authorization" href="/docs/authorization">
+    Decide who can report and who can triage. Management defaults to nobody.
+  </Card>
+  <Card title="Configuration" href="/docs/configuration">
+    Point it at a repository, and tune what the created issues look like.
+  </Card>
+</Cards>

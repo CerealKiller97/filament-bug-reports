@@ -1,0 +1,27 @@
+---
+title: Reporting a bug
+description: The topbar button and the form behind it.
+---
+
+The **Report a bug** button is injected into the topbar next to global search,
+so it's reachable from every page in the panel.
+
+<ThemedImage
+  light="/art/report-form-light.png"
+  dark="/art/report-form-dark.png"
+  alt="The report form, with fields for the title, the steps that led to the bug, and an optional screenshot"
+/>
+
+Steps are a repeater — reporters add and reorder them one at a time, which tends
+to produce far better reproduction steps than a free-text box. The screenshot is
+optional and capped at 5 MB by default.
+
+## What gets stamped automatically
+
+The reporter is never asked for any of this:
+
+- **Who they are** — the authenticated panel user.
+- **Their role** — whatever `resolveReporterRoleUsing()` returns, if you've set it.
+- **The app version** — `bug-reports.app_version`, falling back to the app's
+  `app.version`, and then to `dev`.
+- **When** — the report's `created_at`.

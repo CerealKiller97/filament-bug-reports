@@ -1,0 +1,81 @@
+---
+title: Configuration
+description: Every key in config/bug-reports.php, and the env vars behind them.
+---
+
+## Environment
+
+```dotenv title=".env"
+BUG_REPORTS_GITHUB_TOKEN=ghp_xxxxxxxxxxxx
+BUG_REPORTS_GITHUB_REPOSITORY=acme/platform
+```
+
+Both fall back to `GITHUB_TOKEN` and `GITHUB_BUG_REPOSITORY` if you already have
+those set. The token needs the `repo` (or `issues:write`) scope.
+
+## The config file
+
+```php title="config/bug-reports.php"
+// The model a report belongs to. Point this at your own user model.
+'user_model' => \Illuminate\Foundation\Auth\User::class,
+
+// Stamped onto every report. When empty, falls back to the app's
+// `app.version`, and then to 'dev'.
+'app_version' => env('BUG_REPORTS_APP_VERSION', ''),
+
+'screenshot' => [
+    'disk' => env('BUG_REPORTS_SCREENSHOT_DISK', 'public'),
+    'directory' => env('BUG_REPORTS_SCREENSHOT_DIRECTORY', 'bug-reports'),
+    'max_size' => 5120, // KB
+],
+
+'github' => [
+    'token' => env('BUG_REPORTS_GITHUB_TOKEN', env('GITHUB_TOKEN', '')),
+    'repository' => env('BUG_REPORTS_GITHUB_REPOSITORY', env('GITHUB_BUG_REPOSITORY', '')),
+    'labels' => ['bug'],          // applied to every created issue
+    'assignees' => [],
+    'title_prefix' => '[In App] ',
+
+    // The remaining options the endpoint accepts. Left empty, each is
+    // omitted from the request and GitHub applies its own default.
+    'milestone' => env('BUG_REPORTS_GITHUB_MILESTONE', ''),  // number, not title
+    'type' => env('BUG_REPORTS_GITHUB_TYPE', 'Bug'),         // org repos only
+    'issue_field_values' => [],                              // [['field_id' => 9, 'value' => 'Platform']]
+
+    // Added on top of `labels`, based on the priority picked at triage.
+    // Drop a key (or set it to '') to add no label for that priority.
+    'priority_labels' => [
+        'low' => 'priority: low',
+        'medium' => 'priority: medium',
+        'high' => 'priority: high',
+        'urgent' => 'priority: urgent',
+    ],
+],
+
+'sync' => [
+    'enabled' => true,
+    'frequency' => 'hourly',      // any Laravel Schedule method name
+],
+```
+
+## Empty string means "not configured" — never `null`
+
+<Callout type="error" title="A literal null throws">
+Every string in this config is read with Laravel's `config()->string()`, which
+**throws** when a key holds `null`. It only falls back to a default when the key
+is *missing*, not when it's present-but-null.
+</Callout>
+
+So the unset state for `app_version`, `github.token` and `github.repository` is
+an empty string, which is what the `env(..., '')` fallbacks guarantee. If you
+publish the config, keep that shape. Writing a literal `null`:
+
+```php
+'app_version' => null,   // 💥 InvalidArgumentException on the report form
+```
+
+will throw rather than fall back.
+
+An empty token or repository is also exactly what raises the friendly *"GitHub
+is not configured"* error, instead of the package trying to call the API with
+nothing.
