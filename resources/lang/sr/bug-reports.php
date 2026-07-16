@@ -49,6 +49,18 @@ return [
         'reported_by' => 'Prijavio',
         'reported_at' => 'Prijavljeno',
         'empty' => 'Nema prijavljenih grešaka',
+        'untriaged' => 'Nije obrađeno',
+    ],
+
+    'stats' => [
+        'untriaged' => 'Čeka obradu',
+        'untriaged_description' => 'Prijavljeno, još nije pregledano',
+        'burning' => 'Hitno i visoko',
+        'burning_description' => 'Otvoreno, i boli',
+        'in_progress' => 'U toku',
+        'in_progress_description' => 'Otvoreno na GitHub-u',
+        'resolved' => 'Rešeno',
+        'resolved_description' => 'Issue je zatvoren',
     ],
 
     'filters' => [

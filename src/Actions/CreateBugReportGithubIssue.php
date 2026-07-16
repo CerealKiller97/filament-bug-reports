@@ -141,11 +141,18 @@ final class CreateBugReportGithubIssue
             ? $reporterName
             : (string)__('bug-reports::bug-reports.issue.unknown_reporter');
 
+        // The role is optional — `resolveReporterRoleUsing()` may never be set,
+        // and the column defaults to ''. Without this, every issue in an app
+        // that skipped it reads "Reported by: Stefan ()".
+        if ($bugReport->role !== '') {
+            $reporter .= ' (' . $bugReport->role . ')';
+        }
+
         $reportedAt = $bugReport->created_at?->format('d.m.Y. H:i') ?? '—';
 
         return implode("\n", [
             '## ' . __('bug-reports::bug-reports.issue.details'),
-            '**' . __('bug-reports::bug-reports.issue.reported_by') . ':** ' . $reporter . ' (' . $bugReport->role . ')',
+            '**' . __('bug-reports::bug-reports.issue.reported_by') . ':** ' . $reporter,
             '**' . __('bug-reports::bug-reports.issue.priority') . ':** ' . ($priority?->getLabel() ?? '—'),
             '**' . __('bug-reports::bug-reports.issue.app_version') . ':** ' . $bugReport->app_version,
             '**' . __('bug-reports::bug-reports.issue.reported_at') . ':** ' . $reportedAt,

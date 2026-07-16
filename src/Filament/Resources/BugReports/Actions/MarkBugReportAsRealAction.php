@@ -7,11 +7,13 @@ namespace CerealKiller97\FilamentBugReports\Filament\Resources\BugReports\Action
 use CerealKiller97\FilamentBugReports\Actions\CreateBugReportGithubIssue;
 use CerealKiller97\FilamentBugReports\BugReportsPlugin;
 use CerealKiller97\FilamentBugReports\Enums\BugPriority;
+use CerealKiller97\FilamentBugReports\Filament\Resources\BugReports\Widgets\BugReportsStatsWidget;
 use CerealKiller97\FilamentBugReports\Models\BugReport;
 use Filament\Actions\Action;
 use Filament\Forms\Components\ToggleButtons;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
+use Livewire\Component;
 use Throwable;
 
 class MarkBugReportAsRealAction extends Action
@@ -57,7 +59,7 @@ class MarkBugReportAsRealAction extends Action
         ]);
 
         /** @param array{priority?: BugPriority|string|null} $data */
-        $this->action(function (BugReport $record, array $data): void {
+        $this->action(function (BugReport $record, array $data, Component $livewire): void {
             // Filament hands back an enum instance, but a raw value when the
             // action is called programmatically — and nothing at all when the
             // radio is left alone, which resolves to the lowest priority.
@@ -74,6 +76,9 @@ class MarkBugReportAsRealAction extends Action
 
                 return;
             }
+
+            // A report just left the triage queue for GitHub.
+            $livewire->dispatch(BugReportsStatsWidget::REFRESH_EVENT);
 
             Notification::make()
                 ->success()
