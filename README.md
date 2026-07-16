@@ -112,6 +112,10 @@ Four stats sit above the list, answering the questions a manager opens the page 
 
 Rows can be grouped by **priority**, **reported at**, **reported by** or **app version**, and every group is collapsible. Grouping by priority orders the groups by urgency rather than alphabetically, and reports that haven't been triaged collect under *Not triaged* instead of a blank heading.
 
+| Dark | Light |
+| --- | --- |
+| ![Reports grouped by priority in dark mode](art/grouped-by-priority-dark.png) | ![Reports grouped by priority in light mode](art/grouped-by-priority-light.png) |
+
 ## Triaging and creating the issue
 
 **Mark as real** asks for confirmation and a priority — low, medium, high or urgent — then creates the GitHub issue:
