@@ -119,6 +119,14 @@ npm run dev
 Pages are MDX files in `docs/content/docs/`, ordered by `meta.json`. Pushing to
 `main` deploys the site to GitHub Pages.
 
+The Open Graph image is generated at build time from `app/og.png/route.tsx`.
+The README shows the same image from `art/og.png` — a committed snapshot, since
+GitHub can only render files in the repo. If you change the design, refresh it:
+
+```bash
+npm run build && npm run sync-og
+```
+
 The deployed site records anonymous, cookieless page views with
 [Umami](https://umami.is). It only loads when `NEXT_PUBLIC_UMAMI_WEBSITE_ID` is
 set at build time, which the deploy workflow does — so local builds and forks

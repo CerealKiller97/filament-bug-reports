@@ -1,3 +1,5 @@
+![Filament Bug Reports — in-app bug reports, triaged in your panel and pushed to GitHub as issues](art/og.png)
+
 # Filament Bug Reports
 
 [![Packagist](https://shieldcn.dev/badge/packagist-v0.0.0-2563eb.svg?logo=packagist&logoColor=white)](https://packagist.org/packages/cerealkiller97/filament-bug-reports)
