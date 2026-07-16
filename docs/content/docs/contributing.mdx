@@ -1,0 +1,141 @@
+---
+title: Contributing
+description: How to get a change merged.
+---
+
+Pull requests are welcome — bug fixes, new features, better docs, or just a typo
+you spotted.
+
+<Steps>
+
+<Step>
+
+### Fork and clone
+
+Fork the repository on GitHub, then:
+
+```bash
+git clone git@github.com:YOUR-USERNAME/filament-bug-reports.git
+cd filament-bug-reports
+composer install
+```
+
+</Step>
+
+<Step>
+
+### Branch
+
+Never work on `main` — branch off it, and name the branch after what it does:
+
+```bash
+git switch -c fix/sync-skips-deleted-issues
+```
+
+</Step>
+
+<Step>
+
+### Make the change
+
+Write a test for it. If it touches the panel UI, a before/after screenshot in
+the PR helps a lot.
+
+</Step>
+
+<Step>
+
+### Run the same gates CI runs
+
+A PR that passes these locally will pass on CI:
+
+```bash
+composer lint && composer analyse && composer test && composer type-coverage
+```
+
+| Command | What it runs |
+| --- | --- |
+| `composer test` | Pest |
+| `composer lint` | Pint |
+| `composer analyse` | PHPStan |
+| `composer type-coverage` | Pest type coverage (must stay at 100%) |
+
+</Step>
+
+<Step>
+
+### Commit
+
+Commits follow [Conventional Commits](https://www.conventionalcommits.org/) —
+the release tooling reads them:
+
+```bash
+git commit -m "fix: skip issues that no longer exist on GitHub"
+```
+
+</Step>
+
+<Step>
+
+### Update the changelog
+
+Add a line under `## [Unreleased]` in `CHANGELOG.md`, under the heading that
+matches your change (✨ Added, 🔄 Changed, ⚠️ Deprecated, 🗑️ Removed, 🐛 Fixed,
+🔒 Security).
+
+</Step>
+
+<Step>
+
+### Open the pull request
+
+Push your branch and open a PR against `main`. The template will walk you
+through the rest.
+
+```bash
+git push -u origin fix/sync-skips-deleted-issues
+```
+
+</Step>
+
+</Steps>
+
+<Callout title="Don't overthink it">
+Don't worry about getting every box ticked — open the PR and say what you're
+unsure about. It's easier to help you over the line than to have you not send
+it.
+</Callout>
+
+## Working on these docs
+
+The site lives in `docs/` and is a [Fumadocs](https://fumadocs.dev) app:
+
+```bash
+cd docs
+npm install
+npm run dev
+```
+
+Pages are MDX files in `docs/content/docs/`, ordered by `meta.json`. Pushing to
+`main` deploys the site to GitHub Pages.
+
+The deployed site records anonymous, cookieless page views with
+[Umami](https://umami.is). It only loads when `NEXT_PUBLIC_UMAMI_WEBSITE_ID` is
+set at build time, which the deploy workflow does — so local builds and forks
+send nothing.
+
+Alongside page views it records a few interactions:
+
+| Event | Fired when |
+| --- | --- |
+| `copy-code` | A code block's copy button is used. Carries the snippet's title. |
+| `copy-heading-link` | A heading's anchor link is copied. |
+| `open-search` | The search dialog is opened. |
+| `toggle-theme` | The light/dark toggle is used. |
+| `outbound-link` | A link to another site is followed. |
+| `cta-get-started`, `cta-installation` | A landing page call-to-action is clicked. |
+
+The two `cta-*` events are `data-umami-event` attributes, which Umami picks up
+on its own. The rest are on elements Fumadocs renders, so they're matched by
+`aria-label` in `components/analytics-events.tsx` — if an upstream label
+changes, the event stops firing silently.

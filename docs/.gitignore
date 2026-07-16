@@ -1,0 +1,8 @@
+/node_modules
+/.next
+/.source
+/out
+# Copied from the package's ../art by scripts/copy-art.mjs
+/public/art
+next-env.d.ts
+*.tsbuildinfo

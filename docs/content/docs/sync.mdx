@@ -1,0 +1,33 @@
+---
+title: Keeping reports in sync
+description: Mirroring issue state back onto the report.
+---
+
+While `sync.enabled` is true, the package schedules itself — no entry in your
+`routes/console.php` needed. `frequency` accepts any method on Laravel's
+`Schedule` (`everyFifteenMinutes`, `daily`, …).
+
+You can also run it by hand, or from the **Sync with GitHub** button on the list
+page:
+
+```bash
+php artisan bug-reports:sync
+```
+
+Each linked issue is fetched and mirrored: a closed issue sets `resolved_at` to
+the issue's `closed_at`, reopening clears it.
+
+## Issues that no longer exist
+
+An issue that no longer exists is skipped rather than failing the run — both the
+`404` GitHub returns for an issue it won't show you (never existed, or the token
+can't see it) and the `410 Gone` it returns for one that was **deleted**.
+
+The report keeps its issue number and URL, pointing at a page that is gone. The
+link is deliberately not cleared, because a deleted issue is far more often a
+mistake to undo than a fact to record.
+
+## Scheduling it yourself
+
+Set `sync.enabled` to `false` and call `bug-reports:sync` from your own
+scheduler.

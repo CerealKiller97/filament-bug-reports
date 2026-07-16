@@ -1,0 +1,47 @@
+---
+title: The GitHub issue
+description: What the created issue looks like, and which options GitHub honours.
+---
+
+## The issue body
+
+It's assembled from the report:
+
+````markdown
+## Details
+**Reported by:** Marcus Reed (user)
+**Priority:** High
+**App version:** 2.7.1
+**Reported at:** 11.07.2026. 10:45
+
+## Steps to reproduce
+1. Opened the "Billing" page
+2. Added the coupon SPRING25 to an invoice of $400
+3. The total showed $400 instead of $300
+
+## Screenshot
+https://acme.test/storage/bug-reports/invoice-total.png
+
+---
+_Automatically created from in-app bug report #12._
+````
+
+The screenshot is embedded as a URL, so GitHub can only render it if the disk
+you store it on is publicly reachable.
+
+## Issue options
+
+Everything [GitHub's create-an-issue endpoint](https://docs.github.com/en/rest/issues/issues#create-an-issue)
+accepts can be set under `github` in the config: `labels`, `assignees`,
+`milestone`, `type` and `issue_field_values`. Anything left empty is omitted from
+the request rather than sent as `null`, so GitHub applies its own default.
+
+<Callout type="warning" title="A token without push access silently loses options">
+This one comes from GitHub, not this package. A token **without push access** to
+the target repository has `labels`, `assignees`, `milestone` and `type` silently
+dropped. The issue is still created — just bare, with no error to catch. If your
+issues arrive unlabelled, check the token's scope first.
+
+`type` and `issue_field_values` additionally only work on organisation-owned
+repositories.
+</Callout>

@@ -1,0 +1,68 @@
+---
+title: The triage table
+description: The stats, the grouping, and marking a report as real.
+---
+
+## Stats
+
+Four stats sit above the list, answering the questions a manager opens the page
+with:
+
+| Stat | What it counts |
+| --- | --- |
+| **Awaiting triage** | Reported, nobody has looked yet. Goes amber while the queue is non-empty. |
+| **Urgent and high** | Open and hurting. Goes red while any exist. |
+| **In progress** | Pushed to GitHub, issue still open. |
+| **Resolved** | Issue closed. |
+
+"Urgent and high" counts only *unresolved* reports — closing the issue takes a
+bug off the fire, whatever its priority.
+
+## Grouping
+
+Rows can be grouped by **priority**, **reported at**, **reported by** or **app
+version**, and every group is collapsible. Grouping by priority orders the
+groups by urgency rather than alphabetically, and reports that haven't been
+triaged collect under *Not triaged* instead of a blank heading.
+
+<ThemedImage
+  light="/art/grouped-by-priority-light.png"
+  dark="/art/grouped-by-priority-dark.png"
+  alt="Reports grouped by priority, each group collapsible and ordered by urgency"
+/>
+
+## Marking a report as real
+
+**Mark as real** asks for confirmation and a priority — low, medium, high or
+urgent — then creates the GitHub issue:
+
+<ThemedImage
+  light="/art/mark-as-real-light.png"
+  dark="/art/mark-as-real-dark.png"
+  alt="The Mark as real modal, asking for confirmation and a priority of low, medium, high or urgent"
+/>
+
+Each option carries its own colour — green, amber, red, magenta — and keeps it
+when it becomes a badge in the table.
+
+The priority is stored on the report, so the table can be sorted and filtered by
+it. Sorting ranks the values by urgency rather than alphabetically, and
+untriaged reports rank below every triaged one.
+
+### Picking a priority is optional
+
+**Low** is pre-selected, and a report marked as real without a priority being
+chosen is filed as low. The reasoning is that triage should never be blocked by
+a field, and a bug nobody felt strongly enough about to rank is, by definition,
+the least urgent one. Escalating later is a deliberate act; being nagged for an
+answer at the moment you just want the issue filed is not.
+
+Priority is only ever set at triage time. An untriaged report has no priority at
+all — the column is null, and the table shows `—` — rather than a low that
+nobody actually decided on.
+
+<Callout title="The action is idempotent">
+It disappears once a report is linked, so a report can't produce two issues. If
+GitHub rejects the call, the error is surfaced in a notification and nothing is
+written locally.
+</Callout>
