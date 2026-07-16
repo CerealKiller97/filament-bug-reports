@@ -80,18 +80,28 @@ test('the priority column sorts by urgency, not alphabetically', function (): vo
         ->assertCanSeeTableRecords([$untriaged, $low, $medium, $high, $urgent], inOrder: true);
 });
 
-test('marking a bug as real requires a priority', function (): void {
-    Http::fake();
+test('an unchosen priority falls back to low rather than blocking the triage', function (): void {
+    config()->set('bug-reports.github.repository', 'acme/repo');
+    config()->set('bug-reports.github.token', 'secret');
+    config()->set('bug-reports.github.labels', ['bug']);
+
+    Http::fake([
+        'api.github.com/*' => Http::response([
+            'html_url' => 'https://github.com/acme/repo/issues/9',
+            'number' => 9,
+        ], 201),
+    ]);
 
     actingAs(makeUser(true));
     $report = BugReport::factory()->create();
 
     livewire(ListBugReports::class)
         ->callTableAction('markAsReal', $report, ['priority' => null])
-        ->assertHasTableActionErrors(['priority' => ['required']]);
+        ->assertHasNoTableActionErrors();
 
-    expect($report->refresh()->github_issue_url)->toBeNull();
-    Http::assertNothingSent();
+    expect($report->refresh()->priority)->toBe(BugPriority::Low);
+
+    Http::assertSent(fn (Request $request): bool => $request['labels'] === ['bug', 'priority: low']);
 });
 
 test('the mark as real action is hidden once the report is validated', function (): void {

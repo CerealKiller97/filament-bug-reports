@@ -48,17 +48,15 @@ class MarkBugReportAsRealAction extends Action
                 ->label(__('bug-reports::bug-reports.form.priority'))
                 ->helperText(__('bug-reports::bug-reports.form.priority_helper'))
                 ->options(BugPriority::class)
-                ->default(BugPriority::Medium->value)
-                ->required(),
+                ->default(BugPriority::Low->value),
         ]);
 
-        /** @param array{priority: BugPriority|string} $data */
+        /** @param array{priority?: BugPriority|string|null} $data */
         $this->action(function (BugReport $record, array $data): void {
             // Filament hands back an enum instance, but a raw value when the
-            // action is called programmatically.
-            $priority = $data['priority'] instanceof BugPriority
-                ? $data['priority']
-                : BugPriority::from($data['priority']);
+            // action is called programmatically — and nothing at all when the
+            // radio is left alone, which resolves to the lowest priority.
+            $priority = BugPriority::fromInput($data['priority'] ?? null);
 
             try {
                 $record = resolve(CreateBugReportGithubIssue::class)->handle($record, $priority);

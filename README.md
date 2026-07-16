@@ -99,7 +99,11 @@ Steps are a repeater — reporters add and reorder them one at a time, which ten
 
 ![Mark as real](art/mark-as-real.png)
 
-The priority is required, defaults to medium, and is stored on the report, so the table can be sorted and filtered by it. Sorting ranks the values by urgency rather than alphabetically, and untriaged reports rank below every triaged one. Priority is only ever set at triage time: an untriaged report has no priority at all rather than a misleading default.
+The priority is stored on the report, so the table can be sorted and filtered by it. Sorting ranks the values by urgency rather than alphabetically, and untriaged reports rank below every triaged one.
+
+Picking one is optional: **low** is pre-selected, and a report marked as real without a priority being chosen is filed as low. The reasoning is that triage should never be blocked by a field, and a bug nobody felt strongly enough about to rank is, by definition, the least urgent one. Escalating later is a deliberate act; being nagged for an answer at the moment you just want the issue filed is not.
+
+Priority is only ever set at triage time. An untriaged report has no priority at all — the column is null, and the table shows `—` — rather than a low that nobody actually decided on.
 
 The action is idempotent and disappears once a report is linked, so a report can't produce two issues. If GitHub rejects the call, the error is surfaced in a notification and nothing is written locally.
 

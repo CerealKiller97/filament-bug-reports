@@ -45,6 +45,20 @@ enum BugPriority: string implements HasColor, HasIcon, HasLabel
     }
 
     /**
+     * Resolve a priority from form input. A manager who does not choose one
+     * gets the lowest, so an unanswered radio never blocks a triage — it just
+     * means "nothing to see here".
+     */
+    public static function fromInput(self|string|null $value): self
+    {
+        if ($value instanceof self) {
+            return $value;
+        }
+
+        return ($value === null ? null : self::tryFrom($value)) ?? self::Low;
+    }
+
+    /**
      * Ranked least to most urgent. Ordering by the column itself would sort the
      * values alphabetically, which means nothing.
      */
