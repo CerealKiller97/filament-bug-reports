@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CerealKiller97\FilamentBugReports\Enums;
 
+use Filament\Support\Colors\Color;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
@@ -24,13 +25,20 @@ enum BugPriority: string implements HasColor, HasIcon, HasLabel
         return (string) __('bug-reports::bug-reports.priority.'.$this->value);
     }
 
-    public function getColor(): string
+    /**
+     * Green, amber, red, magenta — the ramp climbs to a colour that reads as
+     * "not like the others". Urgent takes a raw palette because Filament's
+     * registered colours stop at danger (red), and urgent has to out-shout it.
+     *
+     * @return string|array<int, string>
+     */
+    public function getColor(): string|array
     {
         return match ($this) {
-            self::Low => 'gray',
-            self::Medium => 'info',
-            self::High => 'warning',
-            self::Urgent => 'danger',
+            self::Low => 'success',
+            self::Medium => 'warning',
+            self::High => 'danger',
+            self::Urgent => Color::Pink,
         };
     }
 

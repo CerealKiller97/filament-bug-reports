@@ -61,7 +61,7 @@ return [
     'actions' => [
         'mark_as_real' => 'Mark as real',
         'mark_as_real_heading' => 'Mark as a real bug?',
-        'mark_as_real_description' => 'A GitHub issue will be created with the bug details and the priority you pick.',
+        'mark_as_real_description' => 'A GitHub issue will be created with the bug details and the priority below.',
         'mark_as_real_submit' => 'Create issue',
         'delete' => 'Delete',
         'sync' => 'Sync with GitHub',

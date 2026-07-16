@@ -61,7 +61,7 @@ return [
     'actions' => [
         'mark_as_real' => 'Označi kao stvarni',
         'mark_as_real_heading' => 'Označi kao stvarnu grešku?',
-        'mark_as_real_description' => 'Napraviće se GitHub issue sa opisom greške i prioritetom koji izaberete.',
+        'mark_as_real_description' => 'Napraviće se GitHub issue sa opisom greške i prioritetom ispod.',
         'mark_as_real_submit' => 'Napravi issue',
         'delete' => 'Obriši',
         'sync' => 'Sinhronizuj sa GitHub-om',

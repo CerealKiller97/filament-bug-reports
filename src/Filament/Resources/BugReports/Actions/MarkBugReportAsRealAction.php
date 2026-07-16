@@ -9,7 +9,7 @@ use CerealKiller97\FilamentBugReports\BugReportsPlugin;
 use CerealKiller97\FilamentBugReports\Enums\BugPriority;
 use CerealKiller97\FilamentBugReports\Models\BugReport;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\ToggleButtons;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Throwable;
@@ -44,10 +44,15 @@ class MarkBugReportAsRealAction extends Action
         $this->modalSubmitActionLabel(__('bug-reports::bug-reports.actions.mark_as_real_submit'));
 
         $this->schema([
-            Radio::make('priority')
+            // ToggleButtons rather than a Radio: it reads the colour and icon
+            // straight off the enum, so each option carries the same colour as
+            // the badge it becomes. A Radio paints every option the primary
+            // colour and offers no way to change it.
+            ToggleButtons::make('priority')
                 ->label(__('bug-reports::bug-reports.form.priority'))
                 ->helperText(__('bug-reports::bug-reports.form.priority_helper'))
                 ->options(BugPriority::class)
+                ->inline()
                 ->default(BugPriority::Low->value),
         ]);
 
