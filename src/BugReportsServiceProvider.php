@@ -17,7 +17,7 @@ class BugReportsServiceProvider extends PackageServiceProvider
             ->name('bug-reports')
             ->hasConfigFile()
             ->hasTranslations()
-            ->hasMigration('create_bug_reports_table')
+            ->hasMigrations(['create_bug_reports_table'])
             ->hasCommand(SyncBugReportsCommand::class);
     }
 

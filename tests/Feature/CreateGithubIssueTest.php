@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use CerealKiller97\FilamentBugReports\Actions\CreateBugReportGithubIssue;
+use CerealKiller97\FilamentBugReports\Enums\BugPriority;
 use CerealKiller97\FilamentBugReports\Models\BugReport;
 use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
@@ -37,6 +38,88 @@ test('it creates a github issue with configured labels/prefix and stores the ref
             && $request['labels'] === ['bug', 'in:app']
             && str_contains((string) $request['body'], '1. Open page')
             && str_contains((string) $request['body'], '2. Click button');
+    });
+});
+
+test('it adds the mapped priority label and records the priority', function (): void {
+    config()->set('bug-reports.github.repository', 'acme/repo');
+    config()->set('bug-reports.github.token', 'secret');
+    config()->set('bug-reports.github.labels', ['bug']);
+    config()->set('bug-reports.github.priority_labels', ['low' => 'P3']);
+
+    Http::fake([
+        'api.github.com/*' => Http::response(['html_url' => 'https://github.com/acme/repo/issues/1', 'number' => 1], 201),
+    ]);
+
+    $report = app(CreateBugReportGithubIssue::class)
+        ->handle(BugReport::factory()->create(), BugPriority::Low);
+
+    expect($report->priority)->toBe(BugPriority::Low);
+
+    Http::assertSent(fn (Request $request): bool => $request['labels'] === ['bug', 'P3']
+        && str_contains((string) $request['body'], 'Low'));
+});
+
+test('an unmapped priority adds no label but is still recorded', function (): void {
+    config()->set('bug-reports.github.repository', 'acme/repo');
+    config()->set('bug-reports.github.token', 'secret');
+    config()->set('bug-reports.github.labels', ['bug']);
+    config()->set('bug-reports.github.priority_labels', []);
+
+    Http::fake([
+        'api.github.com/*' => Http::response(['html_url' => 'https://github.com/acme/repo/issues/2', 'number' => 2], 201),
+    ]);
+
+    $report = app(CreateBugReportGithubIssue::class)
+        ->handle(BugReport::factory()->create(), BugPriority::High);
+
+    expect($report->priority)->toBe(BugPriority::High);
+
+    Http::assertSent(fn (Request $request): bool => $request['labels'] === ['bug']);
+});
+
+test('it sends every configured github option', function (): void {
+    config()->set('bug-reports.github.repository', 'acme/repo');
+    config()->set('bug-reports.github.token', 'secret');
+    config()->set('bug-reports.github.labels', ['bug']);
+    config()->set('bug-reports.github.assignees', ['octocat']);
+    config()->set('bug-reports.github.milestone', '4');
+    config()->set('bug-reports.github.type', 'Bug');
+    config()->set('bug-reports.github.issue_field_values', [['field_id' => 9, 'value' => 'Platform']]);
+
+    Http::fake([
+        'api.github.com/*' => Http::response(['html_url' => 'https://github.com/acme/repo/issues/3', 'number' => 3], 201),
+    ]);
+
+    app(CreateBugReportGithubIssue::class)->handle(BugReport::factory()->create());
+
+    Http::assertSent(fn (Request $request): bool => $request['assignees'] === ['octocat']
+        // A milestone is addressed by number, so it must go over the wire as an
+        // integer even though it is configured as a string.
+        && $request['milestone'] === 4
+        && $request['type'] === 'Bug'
+        && $request['issue_field_values'] === [['field_id' => 9, 'value' => 'Platform']]);
+});
+
+test('unset github options are omitted rather than sent as null', function (): void {
+    config()->set('bug-reports.github.repository', 'acme/repo');
+    config()->set('bug-reports.github.token', 'secret');
+    config()->set('bug-reports.github.milestone', '');
+    config()->set('bug-reports.github.type', '');
+    config()->set('bug-reports.github.issue_field_values', []);
+
+    Http::fake([
+        'api.github.com/*' => Http::response(['html_url' => 'https://github.com/acme/repo/issues/4', 'number' => 4], 201),
+    ]);
+
+    app(CreateBugReportGithubIssue::class)->handle(BugReport::factory()->create());
+
+    Http::assertSent(function (Request $request): bool {
+        $keys = array_keys((array) $request->data());
+
+        return ! in_array('milestone', $keys, true)
+            && ! in_array('type', $keys, true)
+            && ! in_array('issue_field_values', $keys, true);
     });
 });
 

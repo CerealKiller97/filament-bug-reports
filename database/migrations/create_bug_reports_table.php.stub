@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('screenshot_path')->nullable();
             $table->string('app_version');
             $table->string('role')->default('');
+            $table->string('priority')->nullable();
             $table->timestampTz('validated_at')->nullable();
             $table->string('github_issue_url')->nullable();
             $table->unsignedBigInteger('github_issue_number')->nullable();

@@ -6,8 +6,10 @@ namespace CerealKiller97\FilamentBugReports\Filament\Resources\BugReports\Action
 
 use CerealKiller97\FilamentBugReports\Actions\CreateBugReportGithubIssue;
 use CerealKiller97\FilamentBugReports\BugReportsPlugin;
+use CerealKiller97\FilamentBugReports\Enums\BugPriority;
 use CerealKiller97\FilamentBugReports\Models\BugReport;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Radio;
 use Filament\Notifications\Notification;
 use Filament\Support\Icons\Heroicon;
 use Throwable;
@@ -41,9 +43,25 @@ class MarkBugReportAsRealAction extends Action
 
         $this->modalSubmitActionLabel(__('bug-reports::bug-reports.actions.mark_as_real_submit'));
 
-        $this->action(function (BugReport $record): void {
+        $this->schema([
+            Radio::make('priority')
+                ->label(__('bug-reports::bug-reports.form.priority'))
+                ->helperText(__('bug-reports::bug-reports.form.priority_helper'))
+                ->options(BugPriority::class)
+                ->default(BugPriority::Medium->value)
+                ->required(),
+        ]);
+
+        /** @param array{priority: BugPriority|string} $data */
+        $this->action(function (BugReport $record, array $data): void {
+            // Filament hands back an enum instance, but a raw value when the
+            // action is called programmatically.
+            $priority = $data['priority'] instanceof BugPriority
+                ? $data['priority']
+                : BugPriority::from($data['priority']);
+
             try {
-                $record = resolve(CreateBugReportGithubIssue::class)->handle($record);
+                $record = resolve(CreateBugReportGithubIssue::class)->handle($record, $priority);
             } catch (Throwable $throwable) {
                 Notification::make()
                     ->danger()

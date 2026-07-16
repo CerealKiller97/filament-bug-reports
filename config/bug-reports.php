@@ -62,6 +62,39 @@ return [
         'labels' => ['bug'],
         'assignees' => [],
         'title_prefix' => '[In App] ',
+
+        /*
+        | The rest of the options GitHub's "create an issue" endpoint accepts.
+        | Each is omitted from the request when left empty, so GitHub applies
+        | its own default. A token without push access to the repository has
+        | labels, assignees, milestone and type silently dropped by GitHub —
+        | the issue is still created, just bare.
+        |
+        | https://docs.github.com/en/rest/issues/issues#create-an-issue
+        */
+
+        // The milestone's number (as shown in its URL), not its title.
+        'milestone' => env('BUG_REPORTS_GITHUB_MILESTONE', ''),
+
+        // The name of an issue type, e.g. 'Bug'. Organisation repositories only.
+        'type' => env('BUG_REPORTS_GITHUB_TYPE', ''),
+
+        // Issue field values, for organisation repositories that have them
+        // enabled: [['field_id' => 123, 'value' => 'Platform'], ...].
+        'issue_field_values' => [],
+
+        /*
+        | The label added alongside the ones above, based on the priority a
+        | manager picks when marking a report as real. Drop a key (or set it
+        | to '') to add no label for that priority.
+        */
+
+        'priority_labels' => [
+            'low' => 'priority: low',
+            'medium' => 'priority: medium',
+            'high' => 'priority: high',
+            'urgent' => 'priority: urgent',
+        ],
     ],
 
     /*

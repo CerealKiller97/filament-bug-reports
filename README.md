@@ -95,9 +95,11 @@ Steps are a repeater — reporters add and reorder them one at a time, which ten
 
 ## Triaging and creating the issue
 
-**Mark as real** asks for confirmation, then creates the GitHub issue:
+**Mark as real** asks for confirmation and a priority — low, medium, high or urgent — then creates the GitHub issue:
 
 ![Mark as real](art/mark-as-real.png)
+
+The priority is required, defaults to medium, and is stored on the report, so the table can be sorted and filtered by it. Sorting ranks the values by urgency rather than alphabetically, and untriaged reports rank below every triaged one. Priority is only ever set at triage time: an untriaged report has no priority at all rather than a misleading default.
 
 The action is idempotent and disappears once a report is linked, so a report can't produce two issues. If GitHub rejects the call, the error is surfaced in a notification and nothing is written locally.
 
@@ -106,6 +108,7 @@ The issue body is assembled from the report:
 ```markdown
 ## Details
 **Reported by:** Marcus Reed (user)
+**Priority:** High
 **App version:** 2.7.1
 **Reported at:** 11.07.2026. 10:45
 
@@ -122,6 +125,10 @@ _Automatically created from in-app bug report #12._
 ```
 
 The screenshot is embedded as a URL, so GitHub can only render it if the disk you store it on is publicly reachable.
+
+Everything [GitHub's create-an-issue endpoint](https://docs.github.com/en/rest/issues/issues#create-an-issue) accepts can be set under `github` in the config: `labels`, `assignees`, `milestone`, `type` and `issue_field_values`. Anything left empty is omitted from the request rather than sent as `null`, so GitHub applies its own default.
+
+One caveat that comes from GitHub, not this package: a token **without push access** to the target repository has `labels`, `assignees`, `milestone` and `type` silently dropped. The issue is still created — just bare, with no error to catch. If your issues arrive unlabelled, check the token's scope first. `type` and `issue_field_values` additionally only work on organisation-owned repositories.
 
 ## Configuration
 
@@ -154,6 +161,21 @@ Both fall back to `GITHUB_TOKEN` and `GITHUB_BUG_REPOSITORY` if you already have
     'labels' => ['bug'],          // applied to every created issue
     'assignees' => [],
     'title_prefix' => '[In App] ',
+
+    // Added on top of `labels`, based on the priority picked at triage.
+    // Drop a key (or set it to '') to add no label for that priority.
+    'priority_labels' => [
+        'low' => 'priority: low',
+        'medium' => 'priority: medium',
+        'high' => 'priority: high',
+        'urgent' => 'priority: urgent',
+    ],
+
+    // The remaining options the endpoint accepts. Left empty, each is
+    // omitted from the request and GitHub applies its own default.
+    'milestone' => env('BUG_REPORTS_GITHUB_MILESTONE', ''),  // number, not title
+    'type' => env('BUG_REPORTS_GITHUB_TYPE', ''),            // e.g. 'Bug'
+    'issue_field_values' => [],                              // [['field_id' => 9, 'value' => 'Platform']]
 ],
 
 'sync' => [
