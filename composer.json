@@ -12,7 +12,10 @@
     "license": "Apache-2.0",
     "authors": [
         {
-            "name": "CerealKiller97"
+            "name": "CerealKiller97",
+            "homepage": "https://stefanbogdanovic.dev",
+            "email": "stefan@stefanbogdanovic.dev",
+            "role": "Developer"
         }
     ],
     "minimum-stability": "stable",
