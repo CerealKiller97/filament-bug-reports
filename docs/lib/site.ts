@@ -7,7 +7,7 @@ export const SITE_DESCRIPTION =
  * Scrapers don't resolve relative URLs and never see the dev server, so the
  * deployed origin (base path included) is hardcoded rather than inferred.
  */
-export const SITE_URL = 'https://cerealkiller97.github.io/filament-bug-reports';
+export const SITE_URL = 'https://filament-bug-reports.stefanbogdanovic.dev/';
 
 /**
  * Next merges metadata shallowly: a page that declares `openGraph` replaces the

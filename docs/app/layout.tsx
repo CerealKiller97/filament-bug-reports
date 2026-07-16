@@ -1,5 +1,6 @@
 import './global.css';
 import type { Metadata } from 'next';
+import NextTopLoader from 'nextjs-toploader';
 import type { ReactNode } from 'react';
 import { Analytics } from '@/components/analytics';
 import { withBasePath } from '@/lib/base-path';
@@ -40,6 +41,16 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body className="flex min-h-screen flex-col">
+        {/* The App Router fires no navigation events, so the loader hooks
+            history itself. `color` is the theme variable rather than a literal,
+            so the bar follows the light/dark toggle. */}
+        <NextTopLoader
+          color="var(--color-fd-primary)"
+          height={2}
+          shadow={false}
+          showSpinner={false}
+          zIndex={9999}
+        />
         <Provider>{children}</Provider>
         <Analytics />
       </body>

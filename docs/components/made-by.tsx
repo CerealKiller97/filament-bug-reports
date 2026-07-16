@@ -9,7 +9,7 @@ export function MadeBy({ className }: { className?: string }) {
         href="https://stefanbogdanovic.dev"
         target="_blank"
         rel="noreferrer"
-        className="font-medium text-fd-foreground underline underline-offset-4 hover:text-fd-primary"
+        className="whitespace-nowrap font-medium text-fd-foreground underline underline-offset-4 hover:text-fd-primary"
       >
         Stefan Bogdanović
       </a>
