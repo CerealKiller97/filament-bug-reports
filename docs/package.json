@@ -9,6 +9,7 @@
     "build": "next build",
     "start": "next start",
     "postinstall": "fumadocs-mdx",
+    "sync-og": "node scripts/sync-og.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
