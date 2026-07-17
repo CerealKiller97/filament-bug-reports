@@ -9,9 +9,9 @@
 [![Type coverage](https://shieldcn.dev/github/CerealKiller97/filament-bug-reports/ci.svg?workflow=type-coverage.yml&label=types)](https://github.com/CerealKiller97/filament-bug-reports/actions/workflows/type-coverage.yml)
 [![License](https://shieldcn.dev/github/CerealKiller97/filament-bug-reports/license.svg)](LICENSE.md)
 
-Collect bug reports from inside your Filament panel, and push the ones you confirm are real straight to GitHub as issues.
+Get instant feedback from the people actually using your app. Collect bug reports from inside your Filament panel, and push the ones you confirm are real straight to GitHub as issues.
 
-Your users get a **Report a bug** button in the panel's topbar and a short, plain-language form — no Markdown, no issue templates, no GitHub account. You get a triage table where a single click turns a report into a proper GitHub issue, and the issue's state (open/closed) is mirrored back onto the report automatically.
+Feedback arrives the moment a user hits the problem — not days later through a support email, a Slack thread, or a screenshot with no context. Your users get a **Report a bug** button in the panel's topbar and a short, plain-language form — no Markdown, no issue templates, no GitHub account. You get a triage table where a single click turns a report into a proper GitHub issue, and the issue's state (open/closed) is mirrored back onto the report automatically.
 
 **📖 [Read the documentation](https://filament-bug-reports.stefanbogdanovic.dev/)**
 
