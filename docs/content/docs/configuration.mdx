@@ -8,10 +8,12 @@ description: Every key in config/bug-reports.php, and the env vars behind them.
 ```dotenv title=".env"
 BUG_REPORTS_GITHUB_TOKEN=ghp_xxxxxxxxxxxx
 BUG_REPORTS_GITHUB_REPOSITORY=acme/platform
+BUG_REPORTS_GITHUB_WEBHOOK_SECRET=a-long-random-string
 ```
 
-Both fall back to `GITHUB_TOKEN` and `GITHUB_BUG_REPOSITORY` if you already have
-those set. The token needs the `repo` (or `issues:write`) scope.
+The token and repository fall back to `GITHUB_TOKEN` and `GITHUB_BUG_REPOSITORY`
+if you already have those set. The token needs the `repo` (or `issues:write`)
+scope. The webhook secret is optional — see [Keeping reports in sync](/docs/sync).
 
 ## The config file
 
@@ -55,6 +57,12 @@ those set. The token needs the `repo` (or `issues:write`) scope.
 'sync' => [
     'enabled' => true,
     'frequency' => 'hourly',      // any Laravel Schedule method name
+],
+
+'webhook' => [
+    'secret' => env('BUG_REPORTS_GITHUB_WEBHOOK_SECRET', ''),  // set = endpoint on
+    'path' => env('BUG_REPORTS_GITHUB_WEBHOOK_PATH', 'bug-reports/github/webhook'),
+    'middleware' => [],           // runs after signature check, e.g. 'throttle:60,1'
 ],
 ```
 

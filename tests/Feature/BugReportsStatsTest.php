@@ -5,7 +5,6 @@ declare(strict_types=1);
 use CerealKiller97\FilamentBugReports\Enums\BugPriority;
 use CerealKiller97\FilamentBugReports\Filament\Resources\BugReports\Widgets\BugReportsStatsWidget;
 use CerealKiller97\FilamentBugReports\Models\BugReport;
-
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 use function Pest\Laravel\actingAs;

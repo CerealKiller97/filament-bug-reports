@@ -28,7 +28,9 @@ class BugReportsStatsWidget extends StatsOverviewWidget
      * recounted on render — so receiving the event is the whole job.
      */
     #[On(self::REFRESH_EVENT)]
-    public function refreshStats(): void {}
+    public function refreshStats(): void
+    {
+    }
 
     /**
      * @return array<int, Stat>
