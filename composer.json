@@ -1,5 +1,4 @@
 {
-    "version": "1.0.0",
     "name": "cerealkiller97/filament-bug-reports",
     "description": "A Filament plugin to collect in-app bug reports and push validated ones to GitHub issues.",
     "keywords": [

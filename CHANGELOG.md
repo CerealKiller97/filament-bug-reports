@@ -18,6 +18,8 @@ Each release groups its changes under the following headings, and omits any that
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-07-23
+
 ### ✨ Added
 
 - In-panel bug reporting: a **Report a bug** button in the panel topbar, and a form that captures the problem, step-by-step reproduction and an optional screenshot.
@@ -44,4 +46,6 @@ Each release groups its changes under the following headings, and omits any that
 - Syncing no longer aborts when an issue has been **deleted** on GitHub. Only `404` was skipped, but GitHub answers `410 Gone` for a deleted issue, which threw and left every report after it in the run unsynced.
 - The reporter's role is left out of the issue body when there isn't one, instead of printing empty parentheses — `Reported by: Stefan ()`. Since `resolveReporterRoleUsing()` is optional and the column defaults to `''`, this hit every issue created by an app that hadn't configured a role.
 
-[Unreleased]: https://github.com/CerealKiller97/filament-bug-reports/commits/main
+
+[Unreleased]: https://github.com/CerealKiller97/filament-bug-reports/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/CerealKiller97/filament-bug-reports/compare/v1.0.0...v1.1.0

@@ -2,7 +2,7 @@
 
 # Filament Bug Reports
 
-[![Packagist](https://shieldcn.dev/badge/packagist-v1.0.0-2563eb.svg?logo=packagist&logoColor=white)](https://packagist.org/packages/cerealkiller97/filament-bug-reports)
+[![Packagist](https://shieldcn.dev/badge/packagist-v1.1.0-2563eb.svg?logo=packagist&logoColor=white)](https://packagist.org/packages/cerealkiller97/filament-bug-reports)
 [![Release](https://shieldcn.dev/github/CerealKiller97/filament-bug-reports/release.svg)](https://github.com/CerealKiller97/filament-bug-reports/releases)
 [![Tests](https://shieldcn.dev/github/CerealKiller97/filament-bug-reports/ci.svg?workflow=tests.yml&label=tests)](https://github.com/CerealKiller97/filament-bug-reports/actions/workflows/tests.yml)
 [![PHPStan](https://shieldcn.dev/github/CerealKiller97/filament-bug-reports/ci.svg?workflow=phpstan.yml&label=phpstan)](https://github.com/CerealKiller97/filament-bug-reports/actions/workflows/phpstan.yml)
