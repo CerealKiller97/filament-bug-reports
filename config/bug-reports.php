@@ -113,4 +113,33 @@ return [
         'frequency' => 'hourly',
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Webhook
+    |--------------------------------------------------------------------------
+    |
+    | Instead of (or alongside) the scheduled `sync`, GitHub can push issue
+    | events to this package the moment they happen. Point a repository webhook
+    | with the "Issues" event at the `path` below, choose "application/json",
+    | and set the same secret here and on GitHub.
+    |
+    | The secret is what turns the endpoint on: while it is empty (never null —
+    | see the note on `app_version`) the route answers 404, indistinguishable
+    | from a webhook that was never wired up. With a secret set, every request
+    | must carry a matching `X-Hub-Signature-256` or it is rejected 403.
+    |
+    | `middleware` is applied after signature verification — a natural place for
+    | rate limiting (e.g. 'throttle:60,1'). Do not add the `web` group: GitHub
+    | sends no CSRF token and the request would be rejected.
+    |
+    | https://docs.github.com/en/webhooks/webhook-events-and-payloads#issues
+    |
+    */
+
+    'webhook' => [
+        'secret' => env('BUG_REPORTS_GITHUB_WEBHOOK_SECRET', ''),
+        'path' => env('BUG_REPORTS_GITHUB_WEBHOOK_PATH', 'bug-reports/github/webhook'),
+        'middleware' => [],
+    ],
+
 ];

@@ -18,6 +18,7 @@ class BugReportsServiceProvider extends PackageServiceProvider
             ->hasConfigFile()
             ->hasTranslations()
             ->hasMigrations(['create_bug_reports_table'])
+            ->hasRoute('webhooks')
             ->hasCommand(SyncBugReportsCommand::class);
     }
 

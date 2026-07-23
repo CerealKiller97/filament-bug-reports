@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace CerealKiller97\FilamentBugReports\Actions;
 
 use CerealKiller97\FilamentBugReports\Models\BugReport;
-use Carbon\CarbonImmutable;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
@@ -51,20 +50,9 @@ final class SyncBugReportGithubIssues
 
             $response->throw();
 
-            $closedAt = $response->json('state') === 'closed'
-                ? CarbonImmutable::parse((string) ($response->json('closed_at') ?? 'now'))
-                : null;
-
-            $unchanged = ($report->resolved_at === null && ! $closedAt instanceof CarbonImmutable)
-                || ($report->resolved_at !== null && $closedAt instanceof CarbonImmutable && $report->resolved_at->equalTo($closedAt));
-
-            if ($unchanged) {
-                continue;
+            if ($report->applyIssueState($response->json('state'), $response->json('closed_at'))) {
+                $changed++;
             }
-
-            $report->forceFill(['resolved_at' => $closedAt])->save();
-
-            $changed++;
         }
 
         return $changed;

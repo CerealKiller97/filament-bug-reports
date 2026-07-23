@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Carbon;
+use Carbon\CarbonImmutable;
 
 /**
  * @property-read  int $id
@@ -78,6 +79,34 @@ class BugReport extends Model
     public function isResolved(): bool
     {
         return $this->resolved_at !== null;
+    }
+
+    /**
+     * Mirror a GitHub issue's open/closed state onto this report. A closed
+     * issue resolves the report — stamped with the issue's own `closed_at`, so
+     * the report carries when GitHub closed it rather than when we noticed — and
+     * an open one clears it. Returns whether anything actually changed, so the
+     * scheduled sync and the webhook can both count and skip no-op writes.
+     *
+     * Both the polling response and the webhook payload feed this straight from
+     * JSON, so the arguments are typed loosely and normalised here.
+     */
+    public function applyIssueState(mixed $state, mixed $closedAt): bool
+    {
+        $resolvedAt = $state === 'closed'
+            ? CarbonImmutable::parse(is_string($closedAt) && $closedAt !== '' ? $closedAt : 'now')
+            : null;
+
+        $unchanged = ($this->resolved_at === null && ! $resolvedAt instanceof CarbonImmutable)
+            || ($this->resolved_at !== null && $resolvedAt instanceof CarbonImmutable && $this->resolved_at->equalTo($resolvedAt));
+
+        if ($unchanged) {
+            return false;
+        }
+
+        $this->forceFill(['resolved_at' => $resolvedAt])->save();
+
+        return true;
     }
 
     /**

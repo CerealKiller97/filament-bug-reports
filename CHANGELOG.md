@@ -25,6 +25,7 @@ Each release groups its changes under the following headings, and omits any that
 - **Mark as real** action that creates a GitHub issue from a report and links the issue back to it. The action is idempotent — a report can never produce two issues.
 - `bug-reports:sync` command, scheduled hourly by default, mirroring each linked issue's state back onto its report (closed becomes *Resolved*, reopened flips back to *In progress*).
 - **Sync with GitHub** header action to run that sync on demand from the list page.
+- GitHub webhook endpoint that mirrors issue state the moment it changes, applying the same closed/reopened rule as the scheduled sync. Off until a `webhook.secret` is set; every delivery is verified against its `X-Hub-Signature-256` and events from other repositories are ignored.
 - Permission hooks on the plugin: `authorizeManagementUsing()`, `authorizeReportingUsing()` and `resolveReporterRoleUsing()`. Management defaults to nobody; reporting defaults to every authenticated user.
 - Reports are stamped server-side with the reporter, their resolved role and the running app version — the reporter is never asked for any of it.
 - Configurable GitHub labels, assignees and issue title prefix.

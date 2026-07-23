@@ -31,3 +31,61 @@ mistake to undo than a fact to record.
 
 Set `sync.enabled` to `false` and call `bug-reports:sync` from your own
 scheduler.
+
+## Real-time sync with webhooks
+
+Polling closes the loop within an hour (or whatever `frequency` you set). To
+mirror issue state the instant it changes, point a GitHub webhook at the package
+instead — the two mechanisms are independent and can run together, the webhook
+catching changes live and the schedule sweeping up anything a missed delivery
+left behind.
+
+The endpoint applies the **exact same** rule as the schedule: a `closed` issue
+sets `resolved_at` to the issue's `closed_at`, `reopened` clears it. Every other
+issue action is acknowledged and ignored.
+
+### Turn it on
+
+Set a secret — any long random string. This is the switch: while it's empty the
+endpoint answers `404`, indistinguishable from a webhook that was never wired
+up.
+
+```dotenv title=".env"
+BUG_REPORTS_GITHUB_WEBHOOK_SECRET=a-long-random-string
+```
+
+### Register it on GitHub
+
+In the repository, under **Settings → Webhooks → Add webhook**:
+
+- **Payload URL** — your app's URL followed by the configured path, e.g.
+  `https://your-app.test/bug-reports/github/webhook`
+- **Content type** — `application/json`
+- **Secret** — the same value as `BUG_REPORTS_GITHUB_WEBHOOK_SECRET`
+- **Events** — *Let me select individual events* → **Issues** only
+
+<Callout type="warn" title="Signed, not just secret">
+Every delivery must carry a valid `X-Hub-Signature-256` computed from the raw
+body and your secret, or it is rejected with `403`. GitHub sends this
+automatically once the secret is set on both ends; a request without a matching
+signature never reaches a report.
+</Callout>
+
+### Path and middleware
+
+The route lives at `bug-reports.webhook.path` and is named
+`bug-reports.github.webhook`. It is registered **outside** the `web` group on
+purpose — GitHub sends no CSRF token. Anything you add to
+`bug-reports.webhook.middleware` runs *after* the signature is verified, which
+is the right place for rate limiting:
+
+```php title="config/bug-reports.php"
+'webhook' => [
+    'middleware' => ['throttle:60,1'],
+],
+```
+
+<Callout type="info" title="Route caching">
+Because the route is registered by the package, `php artisan route:cache` picks
+it up like any other. Re-run it after changing the path.
+</Callout>
