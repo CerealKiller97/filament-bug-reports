@@ -161,6 +161,89 @@ test('it keeps the reporter role when one is configured', function (): void {
     Http::assertSent(fn (Request $request): bool => str_contains((string) $request['body'], 'Reported by:** Stefan (developer)'));
 });
 
+test('it fills a custom body template with named placeholders', function (): void {
+    config()->set('bug-reports.github.repository', 'acme/repo');
+    config()->set('bug-reports.github.token', 'secret');
+    config()->set('bug-reports.github.issue.body', "## {title}\nBy {reporter} — {priority}\n\n{steps}\n\n_#{id}_");
+
+    Http::fake([
+        'api.github.com/*' => Http::response(['html_url' => 'https://github.com/acme/repo/issues/7', 'number' => 7], 201),
+    ]);
+
+    $user = makeUser(false);
+    $user->forceFill(['name' => 'Stefan'])->save();
+
+    $report = BugReport::factory()->create([
+        'title' => 'Broken button',
+        'steps' => ['Open page', 'Click button'],
+        'role' => '',
+        'user_id' => $user->getKey(),
+    ]);
+
+    app(CreateBugReportGithubIssue::class)->handle($report, BugPriority::High);
+
+    Http::assertSent(function (Request $request) use ($report): bool {
+        $body = (string) $request['body'];
+
+        return $body === "## Broken button\nBy Stefan — High\n\n1. Open page\n2. Click button\n\n_#{$report->id}_";
+    });
+});
+
+test('it fills a custom title template with named placeholders', function (): void {
+    config()->set('bug-reports.github.repository', 'acme/repo');
+    config()->set('bug-reports.github.token', 'secret');
+    config()->set('bug-reports.github.title_prefix', '[In App] ');
+    config()->set('bug-reports.github.issue.title', 'Bug #{id}: {title} ({priority})');
+
+    Http::fake([
+        'api.github.com/*' => Http::response(['html_url' => 'https://github.com/acme/repo/issues/8', 'number' => 8], 201),
+    ]);
+
+    $report = BugReport::factory()->create(['title' => 'Broken button']);
+
+    app(CreateBugReportGithubIssue::class)->handle($report, BugPriority::Urgent);
+
+    // The template replaces the title entirely — `title_prefix` is ignored.
+    Http::assertSent(fn (Request $request): bool => $request['title'] === "Bug #{$report->id}: Broken button (Urgent)");
+});
+
+test('an empty template falls back to the built-in title and body', function (): void {
+    config()->set('bug-reports.github.repository', 'acme/repo');
+    config()->set('bug-reports.github.token', 'secret');
+    config()->set('bug-reports.github.title_prefix', '[In App] ');
+    config()->set('bug-reports.github.issue.title', '');
+    config()->set('bug-reports.github.issue.body', '');
+
+    Http::fake([
+        'api.github.com/*' => Http::response(['html_url' => 'https://github.com/acme/repo/issues/9', 'number' => 9], 201),
+    ]);
+
+    $report = BugReport::factory()->create(['title' => 'Broken button']);
+
+    app(CreateBugReportGithubIssue::class)->handle($report);
+
+    Http::assertSent(fn (Request $request): bool => $request['title'] === '[In App] Broken button'
+        && str_contains((string) $request['body'], 'Steps to reproduce'));
+});
+
+test('a report title containing a placeholder token is not re-interpolated', function (): void {
+    config()->set('bug-reports.github.repository', 'acme/repo');
+    config()->set('bug-reports.github.token', 'secret');
+    config()->set('bug-reports.github.issue.title', '{title}');
+
+    Http::fake([
+        'api.github.com/*' => Http::response(['html_url' => 'https://github.com/acme/repo/issues/10', 'number' => 10], 201),
+    ]);
+
+    // strtr replaces every token in one pass, so the literal "{id}" a user typed
+    // into their report title survives verbatim rather than becoming the id.
+    $report = BugReport::factory()->create(['title' => 'Weird {id} title']);
+
+    app(CreateBugReportGithubIssue::class)->handle($report);
+
+    Http::assertSent(fn (Request $request): bool => $request['title'] === 'Weird {id} title');
+});
+
 test('it is idempotent and does not create a second issue', function (): void {
     Http::fake();
     $report = BugReport::factory()->validated()->create();
