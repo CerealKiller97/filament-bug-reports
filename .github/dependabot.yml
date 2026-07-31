@@ -5,12 +5,25 @@ updates:
     directory: /
     schedule:
       interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: "Etc/UTC"
     open-pull-requests-limit: 10
+    # Cooldown to protect against supply-chain attacks (e.g. xz-utils)
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 3
     groups:
       composer-dev:
         dependency-type: development
         update-types:
           - minor
+          - patch
+      composer-prod-patch:
+        dependency-type: production
+        update-types:
           - patch
 
   # npm dependencies for the documentation site.
@@ -18,17 +31,37 @@ updates:
     directory: /docs
     schedule:
       interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: "Etc/UTC"
     open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 3
     groups:
       docs-minor-patch:
         update-types:
           - minor
           - patch
 
-  # The GitHub Actions used by the workflows. Dependabot bumps the pinned
-  # commit SHAs and keeps the `# vX.Y.Z` comments in sync.
+  # The GitHub Actions used by the workflows.
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: "Etc/UTC"
     open-pull-requests-limit: 10
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+      semver-minor-days: 7
+      semver-patch-days: 3
+    # Group GitHub Action updates into 1 PR to avoid PR clutter
+    groups:
+      github-actions:
+        patterns:
+          - "*"
