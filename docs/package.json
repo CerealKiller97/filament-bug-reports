@@ -31,6 +31,6 @@
     "geist": "^1.7.2",
     "postcss": "^8.5.20",
     "tailwindcss": "^4.3.3",
-    "typescript": "^5.9.3"
+    "typescript": "^7.0.2"
   }
 }
