@@ -12,6 +12,7 @@
 /docs             export-ignore
 /plans            export-ignore
 /tests            export-ignore
+/workbench        export-ignore
 /.gitattributes   export-ignore
 /.gitignore       export-ignore
 /phpstan.neon.dist export-ignore

@@ -1,5 +1,13 @@
 providers:
     - CerealKiller97\FilamentBugReports\BugReportsServiceProvider
+    - Workbench\App\Providers\WorkbenchServiceProvider
+    - Workbench\App\Providers\AdminPanelProvider
 
-migrations:
-    - database/migrations
+seeders:
+    - Workbench\Database\Seeders\DatabaseSeeder
+
+workbench:
+    start: /
+    install: true
+    discovers:
+        web: true

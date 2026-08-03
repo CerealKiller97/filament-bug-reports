@@ -44,14 +44,29 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "CerealKiller97\\FilamentBugReports\\Tests\\": "tests/"
+            "CerealKiller97\\FilamentBugReports\\Tests\\": "tests/",
+            "Workbench\\App\\": "workbench/app/",
+            "Workbench\\Database\\Factories\\": "workbench/database/factories/",
+            "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
         }
     },
     "scripts": {
         "test": "pest",
         "lint": "pint",
         "analyse": "phpstan analyse --memory-limit=2G",
-        "type-coverage": "@php -d memory_limit=-1 vendor/bin/pest --type-coverage --min=100"
+        "type-coverage": "@php -d memory_limit=-1 vendor/bin/pest --type-coverage --min=100",
+        "post-autoload-dump": [
+            "@clear",
+            "@prepare"
+        ],
+        "clear": "@php vendor/bin/testbench package:purge-skeleton --ansi",
+        "prepare": "@php vendor/bin/testbench package:discover --ansi",
+        "build": "@php vendor/bin/testbench workbench:build --ansi",
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "@build",
+            "@php vendor/bin/testbench serve --ansi"
+        ]
     },
     "extra": {
         "laravel": {
