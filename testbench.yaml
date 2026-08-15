@@ -18,3 +18,12 @@ workbench:
         - migrate-fresh:
             '--seed': true
             '--seeder': 'Workbench\Database\Seeders\DatabaseSeeder'
+
+database:
+    path: "workbench/database/database.sqlite"
+
+build:
+    - touch workbench/database/database.sqlite
+    - create-sqlite-db
+    - db-wipe
+    - migrate-fresh
