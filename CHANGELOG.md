@@ -18,6 +18,10 @@ Each release groups its changes under the following headings, and omits any that
 
 ## [Unreleased]
 
+### ✨ Added
+
+- Custom GitHub issue templates: set `github.issue.title` and/or `github.issue.body` to override the created issue's title and body. Templates are interpolated with named placeholders (`{title}`, `{id}`, `{reporter}`, `{priority}`, `{app_version}`, `{reported_at}`, `{steps}`, `{screenshot}`), and fall back to the built-in behaviour when left empty.
+
 ## [1.1.0] - 2026-07-23
 
 ### ✨ Added

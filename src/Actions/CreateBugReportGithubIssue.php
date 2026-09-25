@@ -83,11 +83,11 @@ final class CreateBugReportGithubIssue
         /** @var list<string> $assignees */
         $assignees = config()->array('bug-reports.github.assignees', []);
 
-        $titlePrefix = config()->string('bug-reports.github.title_prefix', '');
+        $placeholders = $this->placeholders($bugReport, $priority);
 
         $payload = [
-            'title' => $titlePrefix.$bugReport->title,
-            'body' => $this->body($bugReport, $priority),
+            'title' => $this->title($bugReport, $placeholders),
+            'body' => $this->body($bugReport, $placeholders),
             'labels' => $labels,
             'assignees' => $assignees,
         ];
@@ -117,9 +117,50 @@ final class CreateBugReportGithubIssue
     }
 
     /**
-     * Build a readable Markdown body from the report's details.
+     * The issue title. When `github.issue.title` holds a template it is filled
+     * with the report's placeholders; otherwise the legacy `title_prefix.title`
+     * is used so existing installs are untouched.
+     *
+     * @param  array<string, string>  $placeholders  brace-keyed, ready for strtr
      */
-    private function body(BugReport $bugReport, ?BugPriority $priority): string
+    private function title(BugReport $bugReport, array $placeholders): string
+    {
+        $template = config()->string('bug-reports.github.issue.title', '');
+
+        if ($template !== '') {
+            return strtr($template, $placeholders);
+        }
+
+        return config()->string('bug-reports.github.title_prefix', '') . $bugReport->title;
+    }
+
+    /**
+     * The issue body. When `github.issue.body` holds a template it is filled
+     * with the report's placeholders; otherwise the built-in, translated layout
+     * is used so existing installs are untouched.
+     *
+     * @param  array<string, string>  $placeholders  brace-keyed, ready for strtr
+     */
+    private function body(BugReport $bugReport, array $placeholders): string
+    {
+        $template = config()->string('bug-reports.github.issue.body', '');
+
+        if ($template !== '') {
+            return strtr($template, $placeholders);
+        }
+
+        return $this->defaultBody($placeholders);
+    }
+
+    /**
+     * The report's details as `{placeholder} => value` pairs, keyed with braces
+     * so the map can be handed straight to strtr. A single strtr pass replaces
+     * every token at once, so a value that itself contains a `{token}` (e.g. a
+     * report title) is never re-interpolated.
+     *
+     * @return array<string, string>
+     */
+    private function placeholders(BugReport $bugReport, ?BugPriority $priority): array
     {
         $steps = collect($bugReport->steps ?? [])
             ->filter(fn (string $step): bool => $step !== '')
@@ -148,23 +189,41 @@ final class CreateBugReportGithubIssue
             $reporter .= ' (' . $bugReport->role . ')';
         }
 
-        $reportedAt = $bugReport->created_at?->format('d.m.Y. H:i') ?? '—';
+        return [
+            '{title}' => $bugReport->title,
+            '{id}' => (string) $bugReport->id,
+            '{reporter}' => $reporter,
+            '{priority}' => $priority?->getLabel() ?? '—',
+            '{app_version}' => $bugReport->app_version,
+            '{reported_at}' => $bugReport->created_at?->format('d.m.Y. H:i') ?? '—',
+            '{steps}' => $steps,
+            '{screenshot}' => $screenshot,
+        ];
+    }
 
+    /**
+     * Build the package's default, translated Markdown body from the resolved
+     * placeholders. Used whenever the host has not configured a body template.
+     *
+     * @param  array<string, string>  $placeholders  brace-keyed, ready for strtr
+     */
+    private function defaultBody(array $placeholders): string
+    {
         return implode("\n", [
             '## ' . __('bug-reports::bug-reports.issue.details'),
-            '**' . __('bug-reports::bug-reports.issue.reported_by') . ':** ' . $reporter,
-            '**' . __('bug-reports::bug-reports.issue.priority') . ':** ' . ($priority?->getLabel() ?? '—'),
-            '**' . __('bug-reports::bug-reports.issue.app_version') . ':** ' . $bugReport->app_version,
-            '**' . __('bug-reports::bug-reports.issue.reported_at') . ':** ' . $reportedAt,
+            '**' . __('bug-reports::bug-reports.issue.reported_by') . ':** ' . $placeholders['{reporter}'],
+            '**' . __('bug-reports::bug-reports.issue.priority') . ':** ' . $placeholders['{priority}'],
+            '**' . __('bug-reports::bug-reports.issue.app_version') . ':** ' . $placeholders['{app_version}'],
+            '**' . __('bug-reports::bug-reports.issue.reported_at') . ':** ' . $placeholders['{reported_at}'],
             '',
             '## ' . __('bug-reports::bug-reports.issue.steps'),
-            $steps,
+            $placeholders['{steps}'],
             '',
             '## ' . __('bug-reports::bug-reports.issue.screenshot'),
-            $screenshot,
+            $placeholders['{screenshot}'],
             '',
             '---',
-            (string)__('bug-reports::bug-reports.issue.footer', ['id' => $bugReport->id]),
+            (string)__('bug-reports::bug-reports.issue.footer', ['id' => $placeholders['{id}']]),
         ]);
     }
 }

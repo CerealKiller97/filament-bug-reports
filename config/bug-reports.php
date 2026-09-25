@@ -64,6 +64,34 @@ return [
         'title_prefix' => '[In App] ',
 
         /*
+        |----------------------------------------------------------------------
+        | Issue templates
+        |----------------------------------------------------------------------
+        |
+        | Override the title and/or body of the created issue. Both are plain
+        | strings interpolated with these named placeholders (order does not
+        | matter, and unused ones are simply left out):
+        |
+        |   {title}        the report's title (without `title_prefix`)
+        |   {id}           the report's id
+        |   {reporter}     the reporter's name, with role in parens if resolved
+        |   {priority}     the priority label (or "—")
+        |   {app_version}  the app version the bug was hit on
+        |   {reported_at}  when it was reported
+        |   {steps}        the numbered steps, or a "no steps" line
+        |   {screenshot}   the screenshot URL, or a "no screenshot" line
+        |
+        | Leave a template empty (the default) to keep the package's built-in
+        | behaviour: `title_prefix` + title for the title, and the translated
+        | Markdown layout for the body.
+        */
+        'issue' => [
+            'title' => env('BUG_REPORTS_GITHUB_ISSUE_TITLE', ''),
+
+            'body' => env('BUG_REPORTS_GITHUB_ISSUE_BODY', ''),
+        ],
+
+        /*
         | The rest of the options GitHub's "create an issue" endpoint accepts.
         | Each is omitted from the request when left empty, so GitHub applies
         | its own default. A token without push access to the repository has

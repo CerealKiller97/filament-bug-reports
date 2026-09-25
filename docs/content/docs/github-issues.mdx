@@ -29,6 +29,58 @@ _Automatically created from in-app bug report #12._
 The screenshot is embedded as a URL, so GitHub can only render it if the disk
 you store it on is publicly reachable.
 
+## Custom templates
+
+Prefer your own wording or layout? Set a template for the title, the body, or
+both under `github.issue`. Each is a plain string interpolated with named
+placeholders, so order does not matter and you only use the ones you want:
+
+```php
+// config/bug-reports.php
+'github' => [
+    'issue' => [
+        'title' => 'Bug #{id}: {title} ({priority})',
+
+        'body' => <<<'MD'
+        ## {title}
+
+        Reported by **{reporter}** on {reported_at} — priority **{priority}**, app version `{app_version}`.
+
+        ### Steps to reproduce
+        {steps}
+
+        ### Screenshot
+        {screenshot}
+
+        _From in-app report #{id}._
+        MD,
+    ],
+],
+```
+
+The available placeholders are:
+
+| Placeholder     | Value                                                        |
+| --------------- | ----------------------------------------------------------- |
+| `{title}`       | The report's title (without `title_prefix`)                 |
+| `{id}`          | The report's id                                             |
+| `{reporter}`    | The reporter's name, with their role in parens if resolved  |
+| `{priority}`    | The priority label, or `—`                                  |
+| `{app_version}` | The app version the bug was hit on                          |
+| `{reported_at}` | When it was reported                                        |
+| `{steps}`       | The numbered steps, or a "no steps" line                    |
+| `{screenshot}`  | The screenshot URL, or a "no screenshot" line               |
+
+Leave a template empty (the default) to keep the built-in behaviour: the title
+falls back to `title_prefix` + the report's title, and the body to the translated
+layout shown above. Both also read from the `BUG_REPORTS_GITHUB_ISSUE_TITLE` and
+`BUG_REPORTS_GITHUB_ISSUE_BODY` environment variables.
+
+<Callout title="A custom title replaces the prefix">
+When you set a title template it is used verbatim — `title_prefix` is **not**
+prepended. Include the prefix in the template yourself if you still want it.
+</Callout>
+
 ## Issue options
 
 Everything [GitHub's create-an-issue endpoint](https://docs.github.com/en/rest/issues/issues#create-an-issue)
