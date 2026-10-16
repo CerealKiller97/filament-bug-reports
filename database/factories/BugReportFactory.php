@@ -32,8 +32,8 @@ class BugReportFactory extends Factory
             'role' => fake()->randomElement(['admin', 'manager', 'user']),
             'priority' => null,
             'validated_at' => null,
-            'github_issue_url' => null,
-            'github_issue_number' => null,
+            'issue_url' => null,
+            'issue_number' => null,
             'resolved_at' => null,
             'user_id' => null,
         ];
@@ -50,8 +50,8 @@ class BugReportFactory extends Factory
             return [
                 'priority' => fake()->randomElement(BugPriority::cases()),
                 'validated_at' => now(),
-                'github_issue_number' => $number,
-                'github_issue_url' => "https://github.com/acme/repo/issues/{$number}",
+                'issue_number' => $number,
+                'issue_url' => "https://github.com/acme/repo/issues/{$number}",
             ];
         });
     }

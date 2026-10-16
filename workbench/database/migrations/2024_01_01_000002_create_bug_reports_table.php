@@ -21,8 +21,8 @@ return new class extends Migration
             $table->string('role')->default('');
             $table->string('priority')->nullable();
             $table->timestampTz('validated_at')->nullable();
-            $table->string('github_issue_url')->nullable();
-            $table->unsignedBigInteger('github_issue_number')->nullable();
+            $table->string('issue_url')->nullable();
+            $table->unsignedBigInteger('issue_number')->nullable();
             $table->timestampTz('resolved_at')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->index('user_id');

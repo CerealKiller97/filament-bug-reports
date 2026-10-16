@@ -30,7 +30,7 @@ final class SyncBugReportGithubIssues
 
         throw_if($repository === '' || $token === '', RuntimeException::class, (string) __('bug-reports::bug-reports.issue.not_configured'));
 
-        $reports = BugReport::query()->whereNotNull('github_issue_number')->get();
+        $reports = BugReport::query()->whereNotNull('issue_number')->get();
 
         $changed = 0;
 
@@ -38,7 +38,7 @@ final class SyncBugReportGithubIssues
             $response = Http::withToken($token)
                 ->acceptJson()
                 ->withHeaders(['X-GitHub-Api-Version' => '2022-11-28'])
-                ->get(sprintf('https://api.github.com/repos/%s/issues/%d', $repository, $report->github_issue_number));
+                ->get(sprintf('https://api.github.com/repos/%s/issues/%d', $repository, $report->issue_number));
 
             // Skip issues that no longer exist rather than aborting the whole
             // run. GitHub answers 404 for an issue it won't show us (never

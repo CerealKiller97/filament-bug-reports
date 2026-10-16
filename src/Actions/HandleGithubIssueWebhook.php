@@ -14,7 +14,7 @@ use Illuminate\Support\Arr;
  *
  * Nothing is trusted about which repository sent the event until the signature
  * middleware has run; on top of that this only touches a report whose stored
- * `github_issue_number` matches, and — when a repository is configured — only
+ * `issue_number` matches, and — when a repository is configured — only
  * when the payload's repository matches it too, so one secret shared across
  * repositories can't cross-close issues.
  *
@@ -52,7 +52,7 @@ final class HandleGithubIssueWebhook
         }
 
         $report = BugReport::query()
-            ->where('github_issue_number', $number)
+            ->where('issue_number', $number)
             ->first();
 
         if ($report === null) {

@@ -54,7 +54,7 @@ test('a manager marks a bug as real, creating a labelled github issue', function
 
     $report->refresh();
 
-    expect($report->github_issue_url)->toBe('https://github.com/acme/repo/issues/7')
+    expect($report->issue_url)->toBe('https://github.com/acme/repo/issues/7')
         ->and($report->validated_at)->not->toBeNull()
         ->and($report->priority)->toBe(BugPriority::High);
 
@@ -167,7 +167,7 @@ test('the sync header button pulls issue state from github', function (): void {
     ]);
 
     actingAs(makeUser(true));
-    $report = BugReport::factory()->validated()->create(['github_issue_number' => 21]);
+    $report = BugReport::factory()->validated()->create(['issue_number' => 21]);
 
     livewire(ListBugReports::class)
         ->callAction('syncGithub');

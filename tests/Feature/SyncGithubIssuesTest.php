@@ -12,7 +12,7 @@ beforeEach(function (): void {
 });
 
 test('it marks a report resolved when its github issue is closed', function (): void {
-    $report = BugReport::factory()->validated()->create(['github_issue_number' => 7]);
+    $report = BugReport::factory()->validated()->create(['issue_number' => 7]);
 
     Http::fake([
         'api.github.com/repos/acme/repo/issues/7' => Http::response([
@@ -30,7 +30,7 @@ test('it marks a report resolved when its github issue is closed', function (): 
 
 test('it clears resolved_at when a previously closed issue is reopened', function (): void {
     $report = BugReport::factory()->validated()->create([
-        'github_issue_number' => 9,
+        'issue_number' => 9,
         'resolved_at' => now(),
     ]);
 
@@ -45,7 +45,7 @@ test('it clears resolved_at when a previously closed issue is reopened', functio
 });
 
 test('it skips issues that no longer exist without failing', function (): void {
-    $report = BugReport::factory()->validated()->create(['github_issue_number' => 404]);
+    $report = BugReport::factory()->validated()->create(['issue_number' => 404]);
 
     Http::fake([
         'api.github.com/repos/acme/repo/issues/404' => Http::response([], 404),
@@ -60,8 +60,8 @@ test('it skips issues that no longer exist without failing', function (): void {
 test('a deleted issue is skipped and does not abort the rest of the run', function (): void {
     // GitHub answers 410 Gone once an issue has actually been deleted, which
     // used to blow up the whole run and leave every later report unsynced.
-    $deleted = BugReport::factory()->validated()->create(['github_issue_number' => 410]);
-    $closed = BugReport::factory()->validated()->create(['github_issue_number' => 11]);
+    $deleted = BugReport::factory()->validated()->create(['issue_number' => 410]);
+    $closed = BugReport::factory()->validated()->create(['issue_number' => 11]);
 
     Http::fake([
         'api.github.com/repos/acme/repo/issues/410' => Http::response([
@@ -81,7 +81,7 @@ test('a deleted issue is skipped and does not abort the rest of the run', functi
 });
 
 test('it ignores reports that were never pushed to github', function (): void {
-    BugReport::factory()->create(['github_issue_number' => null]);
+    BugReport::factory()->create(['issue_number' => null]);
     Http::fake();
 
     $changed = app(SyncBugReportGithubIssues::class)->handle();

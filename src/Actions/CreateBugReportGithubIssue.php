@@ -28,7 +28,7 @@ final class CreateBugReportGithubIssue
      */
     public function handle(BugReport $bugReport, ?BugPriority $priority = null): BugReport
     {
-        if ($bugReport->github_issue_url !== null) {
+        if ($bugReport->issue_url !== null) {
             return $bugReport;
         }
 
@@ -47,8 +47,8 @@ final class CreateBugReportGithubIssue
 
         $bugReport->forceFill([
             'priority' => $priority,
-            'github_issue_url' => (string)$response->json('html_url'),
-            'github_issue_number' => (int)$response->json('number'),
+            'issue_url' => (string)$response->json('html_url'),
+            'issue_number' => (int)$response->json('number'),
             'validated_at' => CarbonImmutable::now('UTC'),
         ])->save();
 

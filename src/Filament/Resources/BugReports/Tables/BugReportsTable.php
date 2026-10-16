@@ -39,13 +39,13 @@ class BugReportsTable
                     ->badge()
                     ->placeholder('—')
                     ->sortable(query: self::sortByPriorityRank(...)),
-                TextColumn::make('github_issue_number')
+                TextColumn::make('issue_number')
                     ->label(__('bug-reports::bug-reports.table.github'))
                     ->badge()
                     ->color('success')
                     ->icon(Heroicon::OutlinedCheckBadge)
                     ->formatStateUsing(fn (?int $state): string => $state === null ? '—' : '#'.$state)
-                    ->url(fn (BugReport $record): ?string => $record->github_issue_url)
+                    ->url(fn (BugReport $record): ?string => $record->issue_url)
                     ->openUrlInNewTab()
                     ->placeholder('—'),
                 TextColumn::make('resolved_at')

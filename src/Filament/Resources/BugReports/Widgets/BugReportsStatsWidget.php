@@ -40,8 +40,8 @@ class BugReportsStatsWidget extends StatsOverviewWidget
         // One pass over the table rather than four count queries.
         $counts = BugReport::query()
             ->selectRaw('count(*) as total')
-            ->selectRaw('sum(case when github_issue_url is null then 1 else 0 end) as untriaged')
-            ->selectRaw('sum(case when github_issue_url is not null and resolved_at is null then 1 else 0 end) as in_progress')
+            ->selectRaw('sum(case when issue_url is null then 1 else 0 end) as untriaged')
+            ->selectRaw('sum(case when issue_url is not null and resolved_at is null then 1 else 0 end) as in_progress')
             ->selectRaw('sum(case when resolved_at is not null then 1 else 0 end) as resolved')
             ->selectRaw('sum(case when resolved_at is null and priority in (?, ?) then 1 else 0 end) as burning', [
                 BugPriority::Urgent->value,
