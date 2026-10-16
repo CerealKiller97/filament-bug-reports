@@ -22,8 +22,8 @@ use Carbon\CarbonImmutable;
  * @property-read  string $role
  * @property-read  BugPriority|null $priority
  * @property-read  Carbon|null $validated_at
- * @property-read  string|null $github_issue_url
- * @property-read  int|null $github_issue_number
+ * @property-read  string|null $issue_url
+ * @property-read  int|null $issue_number
  * @property-read  Carbon|null $resolved_at
  * @property-read  int|null $user_id
  * @property-read  Carbon|null $created_at
@@ -46,8 +46,8 @@ class BugReport extends Model
         'role',
         'priority',
         'validated_at',
-        'github_issue_url',
-        'github_issue_number',
+        'issue_url',
+        'issue_number',
         'resolved_at',
         'user_id',
     ];
@@ -70,7 +70,7 @@ class BugReport extends Model
      */
     public function isValidated(): bool
     {
-        return $this->github_issue_url !== null;
+        return $this->issue_url !== null;
     }
 
     /**

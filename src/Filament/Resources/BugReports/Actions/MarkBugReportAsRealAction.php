@@ -35,7 +35,7 @@ class MarkBugReportAsRealAction extends Action
 
         // Only managers triage, and only until a report is pushed to GitHub.
         $this->visible(fn (BugReport $record): bool => BugReportsPlugin::get()->canManage(auth()->user())
-            && $record->github_issue_url === null);
+            && $record->issue_url === null);
 
         $this->requiresConfirmation();
 
@@ -83,11 +83,11 @@ class MarkBugReportAsRealAction extends Action
             Notification::make()
                 ->success()
                 ->title(__('bug-reports::bug-reports.notifications.issue_created'))
-                ->body(__('bug-reports::bug-reports.notifications.issue_created_body', ['number' => $record->github_issue_number]))
+                ->body(__('bug-reports::bug-reports.notifications.issue_created_body', ['number' => $record->issue_number]))
                 ->actions([
                     Action::make('open')
                         ->label(__('bug-reports::bug-reports.actions.open_issue'))
-                        ->url((string) $record->github_issue_url)
+                        ->url((string) $record->issue_url)
                         ->openUrlInNewTab(),
                 ])
                 ->send();

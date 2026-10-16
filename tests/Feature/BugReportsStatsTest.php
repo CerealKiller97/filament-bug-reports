@@ -57,7 +57,7 @@ test('the stats recount when told the data went stale', function (): void {
         ->assertSee('Awaiting triage');
 
     // Something else on the page changes a report...
-    $report->forceFill(['github_issue_url' => 'https://github.com/acme/repo/issues/1', 'github_issue_number' => 1])->save();
+    $report->forceFill(['issue_url' => 'https://github.com/acme/repo/issues/1', 'issue_number' => 1])->save();
 
     // ...and the widget is told, rather than sitting on a stale count.
     $widget->dispatch(BugReportsStatsWidget::REFRESH_EVENT);

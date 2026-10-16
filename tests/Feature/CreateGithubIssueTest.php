@@ -28,8 +28,8 @@ test('it creates a github issue with configured labels/prefix and stores the ref
 
     $result = app(CreateBugReportGithubIssue::class)->handle($report);
 
-    expect($result->github_issue_url)->toBe('https://github.com/acme/repo/issues/42')
-        ->and($result->github_issue_number)->toBe(42)
+    expect($result->issue_url)->toBe('https://github.com/acme/repo/issues/42')
+        ->and($result->issue_number)->toBe(42)
         ->and($result->validated_at)->not->toBeNull();
 
     Http::assertSent(function (Request $request): bool {
@@ -164,11 +164,11 @@ test('it keeps the reporter role when one is configured', function (): void {
 test('it is idempotent and does not create a second issue', function (): void {
     Http::fake();
     $report = BugReport::factory()->validated()->create();
-    $existingUrl = $report->github_issue_url;
+    $existingUrl = $report->issue_url;
 
     $result = app(CreateBugReportGithubIssue::class)->handle($report);
 
-    expect($result->github_issue_url)->toBe($existingUrl);
+    expect($result->issue_url)->toBe($existingUrl);
     Http::assertNothingSent();
 });
 

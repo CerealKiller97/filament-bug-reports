@@ -42,7 +42,7 @@ function issueEvent(string $action, array $issue, string $repository = 'acme/rep
 }
 
 test('a closed-issue event resolves the matching report', function (): void {
-    $report = BugReport::factory()->validated()->create(['github_issue_number' => 7]);
+    $report = BugReport::factory()->validated()->create(['issue_number' => 7]);
 
     $response = deliver(issueEvent('closed', [
         'number' => 7,
@@ -58,7 +58,7 @@ test('a closed-issue event resolves the matching report', function (): void {
 
 test('a reopened-issue event clears resolved_at', function (): void {
     $report = BugReport::factory()->validated()->create([
-        'github_issue_number' => 9,
+        'issue_number' => 9,
         'resolved_at' => now(),
     ]);
 
@@ -70,7 +70,7 @@ test('a reopened-issue event clears resolved_at', function (): void {
 
 test('a request with a bad signature is rejected and changes nothing', function (): void {
     $report = BugReport::factory()->validated()->create([
-        'github_issue_number' => 7,
+        'issue_number' => 7,
         'resolved_at' => null,
     ]);
 
@@ -94,7 +94,7 @@ test('the endpoint 404s while no secret is configured', function (): void {
 
 test('a non-issues event is acknowledged and ignored', function (): void {
     $report = BugReport::factory()->validated()->create([
-        'github_issue_number' => 7,
+        'issue_number' => 7,
         'resolved_at' => null,
     ]);
 
@@ -106,7 +106,7 @@ test('a non-issues event is acknowledged and ignored', function (): void {
 
 test('an issue action that does not change state is ignored', function (): void {
     $report = BugReport::factory()->validated()->create([
-        'github_issue_number' => 7,
+        'issue_number' => 7,
         'resolved_at' => null,
     ]);
 
@@ -118,7 +118,7 @@ test('an issue action that does not change state is ignored', function (): void 
 
 test('an event for an untracked issue number is a no-op', function (): void {
     $report = BugReport::factory()->validated()->create([
-        'github_issue_number' => 7,
+        'issue_number' => 7,
         'resolved_at' => null,
     ]);
 
@@ -130,7 +130,7 @@ test('an event for an untracked issue number is a no-op', function (): void {
 
 test('an event from a different repository is ignored', function (): void {
     $report = BugReport::factory()->validated()->create([
-        'github_issue_number' => 7,
+        'issue_number' => 7,
         'resolved_at' => null,
     ]);
 
