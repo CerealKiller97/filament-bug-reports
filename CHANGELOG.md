@@ -18,6 +18,10 @@ Each release groups its changes under the following headings, and omits any that
 
 ## [Unreleased]
 
+### ✨ Added
+
+- Spanish (`es`), French (`fr`) and Brazilian Portuguese (`pt_BR`) translations.
+
 ## [1.1.0] - 2026-07-23
 
 ### ✨ Added
