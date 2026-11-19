@@ -14,22 +14,22 @@
   },
   "dependencies": {
     "@orama/orama": "^3.1.13",
-    "fumadocs-core": "^16.15.4",
-    "fumadocs-mdx": "^15.4.0",
-    "fumadocs-ui": "^16.15.4",
+    "fumadocs-core": "^16.19.3",
+    "fumadocs-mdx": "^15.6.2",
+    "fumadocs-ui": "^16.19.3",
     "next": "^16.4.6",
     "nextjs-toploader": "^3.9.17",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8"
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.3.3",
+    "@tailwindcss/postcss": "^4.3.5",
     "@types/mdx": "^2.0.13",
-    "@types/node": "^26.4.0",
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.5",
-    "geist": "^1.7.2",
-    "postcss": "^8.5.26",
+    "@types/node": "^26.6.6",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "geist": "^1.9.2",
+    "postcss": "^8.5.33",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2"
   }
